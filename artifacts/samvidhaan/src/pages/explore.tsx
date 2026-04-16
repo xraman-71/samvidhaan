@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Book, Shield, Scale, History, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, Book, Shield, History, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -75,13 +75,11 @@ export default function Explore() {
             </TabsTrigger>
           </TabsList>
 
-          <AnimatePresence mode="wait">
-            <TabsContent value="rights" className="mt-0 outline-none">
+          <TabsContent value="rights" className="mt-0 outline-none">
               <motion.div 
                 variants={container}
                 initial="hidden"
                 animate="show"
-                exit="hidden"
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
                 {filteredRights.length > 0 ? filteredRights.map((right) => (
@@ -114,7 +112,6 @@ export default function Explore() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                exit="hidden"
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >
                 {filteredArticles.length > 0 ? filteredArticles.map((article) => (
@@ -156,7 +153,6 @@ export default function Explore() {
                 variants={container}
                 initial="hidden"
                 animate="show"
-                exit="hidden"
                 className="space-y-6"
               >
                 {keyAmendments.map((amendment, index) => (
@@ -174,7 +170,6 @@ export default function Explore() {
                 ))}
               </motion.div>
             </TabsContent>
-          </AnimatePresence>
         </Tabs>
       </div>
     </div>
