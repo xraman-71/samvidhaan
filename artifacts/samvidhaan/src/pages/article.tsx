@@ -5,7 +5,7 @@ import { ArrowLeft, BookOpen, Share2, Bookmark, CheckCircle2, ChevronRight } fro
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { fundamentalRights } from "@/data/fundamentalRights";
-import { articles } from "@/data/articles";
+import { allArticles } from "@/data/allArticles";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import NotFound from "./not-found";
@@ -17,7 +17,7 @@ export default function ArticleDetail() {
 
   // Find if it's a fundamental right or an article
   const isRight = fundamentalRights.find(r => r.id === id);
-  const isArticle = articles.find(a => a.id === id);
+  const isArticle = allArticles.find(a => a.id === id);
 
   const data = isRight || isArticle;
 
@@ -57,18 +57,27 @@ export default function ArticleDetail() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex flex-wrap items-center gap-3 mb-6">
-            <Badge className={
-              isFundamentalRightType ? "bg-secondary/10 text-secondary hover:bg-secondary/20 border-0" :
-              data.category === 'Fundamental Rights' ? 'bg-secondary/10 text-secondary border-0' :
-              data.category === 'Directive Principles' ? 'bg-accent/10 text-accent border-0' :
-              'bg-primary/10 text-primary border-0'
-            }>
-              {isFundamentalRightType ? data.articles : data.category}
-            </Badge>
-            {!isFundamentalRightType && (
-              <Badge variant="outline" className="border-border text-muted-foreground">
-                Article {data.number}
+            {isFundamentalRightType ? (
+              <Badge className="bg-secondary/10 text-secondary hover:bg-secondary/20 border-0">
+                {(data as typeof fundamentalRights[0]).articles}
               </Badge>
+            ) : (
+              <>
+                <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary font-semibold">
+                  Article {(data as typeof allArticles[0]).number}
+                </Badge>
+                <Badge variant="outline" className="border-border text-muted-foreground text-xs">
+                  {(data as typeof allArticles[0]).part} — {(data as typeof allArticles[0]).partTitle}
+                </Badge>
+                <Badge className={
+                  data.category === 'Fundamental Rights' ? 'bg-secondary/10 text-secondary border-0' :
+                  data.category === 'Directive Principles' ? 'bg-accent/10 text-accent border-0' :
+                  data.category === 'Fundamental Duties' ? 'bg-teal-100 text-teal-700 border-0' :
+                  'bg-primary/10 text-primary border-0'
+                }>
+                  {data.category}
+                </Badge>
+              </>
             )}
           </div>
 
@@ -146,7 +155,7 @@ export default function ArticleDetail() {
               <h3 className="text-xl font-bold font-serif text-primary mb-4">Related Articles</h3>
               <div className="flex flex-wrap gap-3">
                 {data.relatedArticles.map((relId) => {
-                  const relData = articles.find(a => a.id === relId);
+                  const relData = allArticles.find(a => a.id === relId);
                   if (!relData) return null;
                   return (
                     <Link key={relId} href={`/article/${relId}`}>
