@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "GXz_fKdG--6knivtyoJXD"
+uri = "file://artifacts/samvidhaan/public/images/hero-constitution.png"
+type = "image"
+title = "Majestic Indian Constitution hero illustration"
+
+[[generated]]
+id = "iWqvlY5D93Vkc3I27Xkya"
+uri = "file://artifacts/samvidhaan/public/images/ambedkar-about.png"
+type = "image"
+title = "Dr B R Ambedkar working illustration"

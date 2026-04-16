@@ -1,0 +1,403 @@
+# Samvidhaan+ UI Design (Figma Style Layout)
+
+---
+
+## 1. DESIGN SYSTEM
+
+### Colors
+
+* Primary: Deep Navy Blue (#0A1F44)
+* Accent: Saffron (#FF9933)
+* Secondary: Green (#138808)
+* Background: Off White (#F8F9FB)
+* Text Primary: #1A1A1A
+* Text Secondary: #6B7280
+
+### Typography
+
+* Heading: Poppins / Inter (Bold, SemiBold)
+* Body: Inter / Roboto (Regular)
+
+### Components
+
+* Cards (rounded 16px, soft shadow)
+* Buttons (primary filled, secondary outline)
+* Containers (padding 16–24px)
+* Icons (minimal line icons)
+
+---
+
+## 2. LANDING PAGE (HOME)
+
+### Layout Structure:
+
+[HEADER]
+
+* Logo (Samvidhaan+)
+* Nav Links: Home | Explore | Features | About
+* CTA Button: “Start Learning”
+
+[HERO SECTION]
+
+* Left:
+
+  * Heading: “Know Your Rights. Own Your Power.”
+  * Subtext: Simple explanation of Constitution for everyone
+  * Buttons: Explore Now / Learn More
+* Right:
+
+  * Illustration of Constitution + Ashoka emblem
+
+[FEATURE HIGHLIGHTS]
+
+* 3–4 cards:
+
+  * Fundamental Rights
+  * Easy Learning Mode
+  * Quiz & Practice
+  * Multilingual
+
+[WHY USE SECTION]
+
+* Grid layout (2 columns):
+
+  * Easy to Understand
+  * For All Age Groups
+  * Trusted Content
+  * Always Accessible
+
+[ABOUT PREVIEW]
+
+* Small section about Constitution + Ambedkar
+* “Read More” button
+
+[FOOTER]
+
+* Links: About | Privacy | Contact
+* Social icons
+* Ashoka emblem watermark
+
+---
+
+## 3. EXPLORE CONSTITUTION PAGE
+
+### Layout:
+
+[TOP SEARCH BAR]
+
+* Search input (Search Articles, Rights...)
+* Filter dropdown
+
+[CATEGORY TABS]
+
+* Fundamental Rights
+* Duties
+* Articles
+* Amendments
+
+[CARD GRID]
+Each card:
+
+* Title (e.g., Right to Equality)
+* Short description
+* “Read More” button
+
+---
+
+## 4. ARTICLE DETAIL PAGE
+
+### Layout:
+
+[HEADER]
+
+* Back button
+* Title (Article number)
+
+[CONTENT CONTAINER]
+
+* Original text (collapsible)
+* Simplified explanation (highlighted box)
+* Example section
+
+[ACTIONS]
+
+* Bookmark
+* Share
+
+---
+
+## 5. QUIZ PAGE
+
+### Layout:
+
+[QUIZ CARD]
+
+* Question text
+* 4 options (radio buttons)
+* Next button
+
+[PROGRESS BAR]
+
+* Top indicator (Question 2/10)
+
+[RESULT SCREEN]
+
+* Score
+* Message (Good / Improve)
+* Retry button
+
+---
+
+## 6. PROFILE / DASHBOARD (OPTIONAL)
+
+### Layout:
+
+[USER INFO]
+
+* Name
+* Progress stats
+
+[SECTIONS]
+
+* Bookmarked Articles
+* Quiz Scores
+* Daily Streak
+
+---
+
+## 7. ABOUT PAGE
+
+### Layout:
+
+[HERO]
+
+* Title: About the Constitution
+
+[CONTENT]
+
+* Info about Indian Constitution
+* Section about Dr. B. R. Ambedkar
+
+[IMAGE SECTION]
+
+* Portrait images (Ambedkar + assembly members)
+
+---
+
+## 8. MOBILE VERSION (KEY ADAPTATIONS)
+
+* Bottom Navigation Bar:
+
+  * Home
+  * Explore
+  * Quiz
+  * Profile
+
+* Cards become single column
+
+* Sticky CTA buttons
+
+---
+
+## 9. MICRO INTERACTIONS
+
+* Button hover animations
+* Card lift on hover
+* Smooth page transitions
+* Loading skeletons
+
+---
+
+## 10. BRANDING ELEMENTS
+
+* Use Ashoka Lion emblem in:
+
+  * Header (small)
+  * Footer watermark
+
+* Keep usage minimal and respectful
+
+---
+
+## FINAL DESIGN FEEL
+
+* Premium but simple
+* Educational but engaging
+* Clean spacing and hierarchy
+* Easy navigation for all age groups
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+Product Name:
+Samvidhaan+
+
+Tagline:
+Know Your Rights. Own Your Power.
+
+Overview:
+Samvidhaan+ is a web and mobile application designed to make the Indian Constitution simple, accessible, and engaging for all citizens. Inspired by the work of B. R. Ambedkar, the app aims to educate users about their rights, duties, and laws in an easy-to-understand format.
+
+Goals:
+
+* Increase awareness of constitutional rights among Indian citizens
+* Simplify complex legal language
+* Make learning interactive and accessible for all age groups
+
+Target Audience:
+
+* Students (school and college)
+* General public
+* Competitive exam aspirants
+* Professionals
+* Kids (simplified mode)
+
+Key Features:
+
+1. Constitution Explorer
+
+* Browse Fundamental Rights, Duties, Articles
+* Structured navigation by categories
+* Clean card-based UI
+
+2. Simplified Learning Mode
+
+* Convert legal text into easy explanations
+* Short summaries and examples
+
+3. Age-Based Content
+
+* Kids: Visual and simple explanations
+* Students: Moderate detail
+* Adults: Full content
+
+4. Search & Filter
+
+* Search by keyword, article number, or category
+
+5. Bookmark & Save
+
+* Save important articles for later reading
+
+6. Quiz & Learning Section
+
+* MCQs and knowledge tests
+* Track progress
+
+7. Daily Learning Feature
+
+* “Know Your Right Today” notification
+
+8. Multilingual Support
+
+* English (default)
+* Hindi (phase 1)
+* More languages later
+
+Design Requirements:
+
+UI Style:
+
+* Modern, minimal, premium
+* Card-based layout
+* Smooth animations and transitions
+
+Color Palette:
+
+* Inspired by Indian flag (Saffron, White, Green)
+* Accent: Navy Blue (Ashoka Chakra tone)
+
+Visual Elements:
+
+* Ashoka Lion Capital symbol used in header/footer
+* Images of Dr. B. R. Ambedkar and Constituent Assembly members
+* Clean icons and illustrations
+
+Pages:
+
+1. Landing Page
+
+* Hero section with tagline
+* CTA buttons (Explore / Learn More)
+* Highlights of features
+
+2. About Page
+
+* About the Constitution
+* About Dr. B. R. Ambedkar
+
+3. Features Page
+
+* Showcase app functionalities
+
+4. Why Use This App
+
+* Benefits and importance
+
+5. Constitution Section
+
+* Main content browsing
+
+6. Quiz Section
+
+* Interactive learning
+
+7. Footer
+
+* Links (About, Privacy, Contact)
+* Social media
+* Credits
+
+Technical Requirements:
+
+Platform:
+
+* Web (React / Next.js)
+* Mobile (Flutter / React Native)
+
+Backend:
+
+* Node.js / Firebase
+
+Database:
+
+* Store articles, categories, user data
+
+Performance:
+
+* Fast loading
+* Mobile responsive
+
+Security:
+
+* Basic authentication (if user accounts enabled)
+
+Future Scope:
+
+* Voice-based learning
+* AI chatbot for legal questions
+* Regional language expansion
+* Offline mode
+
+Success Metrics:
+
+* User engagement time
+* Daily active users
+* Quiz completion rates
+* Retention rate
+
+Conclusion:
+Samvidhaan+ should feel like a powerful yet simple tool that empowers every Indian citizen to understand their rights and responsibilities with confidence.
+
