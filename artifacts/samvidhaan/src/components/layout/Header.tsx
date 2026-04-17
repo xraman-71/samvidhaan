@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { BookOpen, Map, HelpCircle, Info, Menu, X } from "lucide-react";
+import { BookOpen, Map, HelpCircle, Info, Menu, X, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "./AshokaChakra";
 
@@ -11,6 +11,7 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "Home", icon: BookOpen },
     { href: "/explore", label: "Explore", icon: Map },
+    { href: "/making", label: "Journey", icon: ScrollText },
     { href: "/quiz", label: "Quiz", icon: HelpCircle },
     { href: "/about", label: "About", icon: Info },
   ];

@@ -38,7 +38,7 @@ function CategoryGrid({ onSelect }: { onSelect: (cat: QuizCategory) => void }) {
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold font-serif text-primary mb-3">Constitution Quiz</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            20 categories · 20 questions each · 400 questions total. Test your knowledge of the Indian Constitution.
+            {quizCategories.length} categories · {quizCategories.reduce((sum, c) => sum + c.questions.length, 0)} questions total. Test your knowledge of the Indian Constitution.
           </p>
           <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
             <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${difficultyColor.Beginner}`}>Beginner</span>
@@ -69,7 +69,7 @@ function CategoryGrid({ onSelect }: { onSelect: (cat: QuizCategory) => void }) {
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${difficultyColor[cat.difficulty]}`}>
                     {cat.difficulty}
                   </span>
-                  <span className="text-xs text-muted-foreground">20 Qs</span>
+                  <span className="text-xs text-muted-foreground">{cat.questions.length} Qs</span>
                 </div>
               </motion.button>
             );
