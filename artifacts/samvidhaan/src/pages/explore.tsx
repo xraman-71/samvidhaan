@@ -1,13 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Search, Book, Shield, History, ChevronRight, BookOpen, Filter, X } from "lucide-react";
+import { Search, Book, Shield, History, ChevronRight, BookOpen, Filter, X, Star, Calendar, Landmark } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { fundamentalRights } from "@/data/fundamentalRights";
 import { allArticles, constitutionParts, ConstitutionArticle } from "@/data/allArticles";
 import { keyAmendments } from "@/data/constitution";
+import { schedules } from "@/data/schedules";
 
 const categoryColor = (cat: string) => {
   if (cat === "Fundamental Rights") return "bg-orange-100 text-orange-700 border-orange-200";
@@ -17,6 +18,13 @@ const categoryColor = (cat: string) => {
   if (cat === "The States") return "bg-violet-100 text-violet-700 border-violet-200";
   if (cat === "Elections") return "bg-amber-100 text-amber-700 border-amber-200";
   if (cat === "Emergency Provisions") return "bg-red-100 text-red-700 border-red-200";
+  if (cat === "Local Government") return "bg-lime-100 text-lime-700 border-lime-200";
+  if (cat === "Finance") return "bg-cyan-100 text-cyan-700 border-cyan-200";
+  if (cat === "Services") return "bg-purple-100 text-purple-700 border-purple-200";
+  if (cat === "Language") return "bg-pink-100 text-pink-700 border-pink-200";
+  if (cat === "Trade & Commerce") return "bg-sky-100 text-sky-700 border-sky-200";
+  if (cat === "Union Territories") return "bg-blue-100 text-blue-700 border-blue-200";
+  if (cat === "Transitional") return "bg-gray-100 text-gray-700 border-gray-200";
   return "bg-slate-100 text-slate-700 border-slate-200";
 };
 
@@ -66,6 +74,7 @@ export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [showPartFilter, setShowPartFilter] = useState(false);
+  const [amendmentFilter, setAmendmentFilter] = useState<"all" | "important">("all");
 
   const filteredRights = useMemo(() => fundamentalRights.filter(right =>
     right.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,6 +100,31 @@ export default function Explore() {
     return result;
   }, [searchQuery, selectedPart]);
 
+  const filteredAmendments = useMemo(() => {
+    const base = amendmentFilter === "important"
+      ? keyAmendments.filter(a => a.important)
+      : keyAmendments;
+    if (!searchQuery.trim()) return base;
+    const q = searchQuery.toLowerCase();
+    return base.filter(a =>
+      a.number.toLowerCase().includes(q) ||
+      a.year.includes(q) ||
+      a.summary.toLowerCase().includes(q)
+    );
+  }, [searchQuery, amendmentFilter]);
+
+  const filteredSchedules = useMemo(() => {
+    if (!searchQuery.trim()) return schedules;
+    const q = searchQuery.toLowerCase();
+    return schedules.filter(s =>
+      s.title.toLowerCase().includes(q) ||
+      s.number.toLowerCase().includes(q) ||
+      s.description.toLowerCase().includes(q) ||
+      s.content.some(c => c.toLowerCase().includes(q)) ||
+      s.keyPoints.some(k => k.toLowerCase().includes(q))
+    );
+  }, [searchQuery]);
+
   const groupedByPart = useMemo(() => {
     if (searchQuery.trim() || selectedPart) return null;
     const groups: Record<string, ConstitutionArticle[]> = {};
@@ -113,14 +147,17 @@ export default function Explore() {
         <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="container mx-auto max-w-4xl relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold font-serif mb-4 text-center">Explore the Constitution</h1>
-          <p className="text-primary-foreground/80 text-center mb-8 text-lg max-w-2xl mx-auto">
-            All {allArticles.length}+ articles across 25 Parts of the Indian Constitution — explained in plain language.
+          <p className="text-primary-foreground/80 text-center mb-2 text-lg max-w-2xl mx-auto">
+            All 448 Articles · 12 Schedules · 106 Amendments — explained in plain language.
+          </p>
+          <p className="text-primary-foreground/60 text-center mb-8 text-sm">
+            {allArticles.length} articles covered across 25 Parts of the Indian Constitution
           </p>
           <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/50" />
             <Input
               type="text"
-              placeholder="Search articles, rights, topics, or article numbers..."
+              placeholder="Search articles, schedules, amendments, topics..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-14 text-lg bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50 focus-visible:ring-secondary rounded-full"
@@ -144,8 +181,13 @@ export default function Explore() {
             <TabsTrigger value="rights" className="rounded-lg py-2.5 px-4 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm">
               <Shield className="w-4 h-4 mr-2" /> Fundamental Rights
             </TabsTrigger>
+            <TabsTrigger value="schedules" className="rounded-lg py-2.5 px-4 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              <Landmark className="w-4 h-4 mr-2" /> Schedules
+              <span className="ml-2 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">12</span>
+            </TabsTrigger>
             <TabsTrigger value="amendments" className="rounded-lg py-2.5 px-4 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm">
-              <History className="w-4 h-4 mr-2" /> Key Amendments
+              <History className="w-4 h-4 mr-2" /> Amendments
+              <span className="ml-2 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">106</span>
             </TabsTrigger>
           </TabsList>
 
@@ -294,21 +336,156 @@ export default function Explore() {
             </motion.div>
           </TabsContent>
 
+          {/* SCHEDULES TAB */}
+          <TabsContent value="schedules" className="mt-0 outline-none">
+            <div className="mb-6 p-4 bg-primary/5 rounded-xl border border-primary/10">
+              <p className="text-sm text-muted-foreground">
+                The 12 Schedules of the Indian Constitution contain specific details — lists of states, languages, salaries, powers of local bodies, and more — that supplement the main articles.
+              </p>
+            </div>
+            {filteredSchedules.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground">
+                <Landmark className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p>No schedules found matching "{searchQuery}"</p>
+              </div>
+            ) : (
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+                {filteredSchedules.map((schedule) => (
+                  <motion.div key={schedule.id} variants={itemAnim} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+                    <div className={`p-6 ${schedule.important ? 'border-l-4 border-secondary' : ''}`}>
+                      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary/10 rounded-xl px-3 py-2 text-center min-w-[90px]">
+                            <span className="block text-xs font-medium text-primary/70">{schedule.number.split(" ")[0]}</span>
+                            <span className="block text-sm font-bold text-primary">{schedule.number.split(" ").slice(1).join(" ")}</span>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold text-foreground">{schedule.title}</h3>
+                              {schedule.important && (
+                                <span className="flex items-center gap-1 text-xs text-secondary font-semibold bg-secondary/10 px-2 py-0.5 rounded-full">
+                                  <Star className="h-3 w-3 fill-secondary" /> Important
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{schedule.description}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1.5 flex-wrap">
+                          {schedule.relatedArticles.map(a => (
+                            <Link key={a} href={`/article/article-${a.toLowerCase()}`}>
+                              <Badge variant="outline" className="text-xs bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 cursor-pointer">
+                                Art. {a}
+                              </Badge>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="mb-5">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Contents</h4>
+                        <ul className="space-y-1.5">
+                          {schedule.content.map((item, i) => (
+                            <li key={i} className="text-sm text-foreground/80 flex gap-2">
+                              <span className="text-primary/40 shrink-0">•</span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Key Points */}
+                      <div className="bg-muted/40 rounded-xl p-4">
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Key Points to Remember</h4>
+                        <ul className="space-y-2">
+                          {schedule.keyPoints.map((point, i) => (
+                            <li key={i} className="text-sm text-foreground/80 flex gap-2">
+                              <span className="text-secondary shrink-0 font-bold">→</span>
+                              <span>{point}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </TabsContent>
+
           {/* AMENDMENTS TAB */}
           <TabsContent value="amendments" className="mt-0 outline-none">
-            <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-              {keyAmendments.map((amendment, index) => (
-                <motion.div key={index} variants={itemAnim} className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col md:flex-row gap-6 items-start">
-                  <div className="shrink-0 text-center bg-primary/5 rounded-xl p-4 min-w-[120px]">
-                    <span className="block text-2xl font-bold text-primary">{amendment.year}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">{amendment.number}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{amendment.summary}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+            {/* Filter + Stats */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setAmendmentFilter("all")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                    amendmentFilter === "all"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card border-border text-muted-foreground hover:border-primary/30"
+                  }`}
+                >
+                  All 106 Amendments
+                </button>
+                <button
+                  onClick={() => setAmendmentFilter("important")}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                    amendmentFilter === "important"
+                      ? "bg-secondary text-white border-secondary"
+                      : "bg-card border-border text-muted-foreground hover:border-secondary/30"
+                  }`}
+                >
+                  <Star className="h-3.5 w-3.5" />
+                  Important Only
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredAmendments.length} of {keyAmendments.length} amendments
+              </p>
+            </div>
+
+            {filteredAmendments.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground">
+                <History className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p>No amendments found matching "{searchQuery}"</p>
+              </div>
+            ) : (
+              <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
+                {filteredAmendments.map((amendment, index) => (
+                  <motion.div
+                    key={index}
+                    variants={itemAnim}
+                    className={`bg-card p-5 rounded-2xl border shadow-sm flex flex-col md:flex-row gap-4 items-start ${
+                      amendment.important
+                        ? "border-secondary/30 shadow-secondary/5"
+                        : "border-border"
+                    }`}
+                  >
+                    <div className={`shrink-0 text-center rounded-xl p-3 min-w-[100px] ${
+                      amendment.important ? "bg-secondary/10" : "bg-primary/5"
+                    }`}>
+                      <Calendar className={`h-4 w-4 mx-auto mb-1 ${amendment.important ? "text-secondary" : "text-primary/50"}`} />
+                      <span className={`block text-xl font-bold ${amendment.important ? "text-secondary" : "text-primary"}`}>
+                        {amendment.year}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <h3 className="text-base font-bold text-foreground">{amendment.number}</h3>
+                        {amendment.important && (
+                          <span className="flex items-center gap-1 text-xs text-secondary font-semibold bg-secondary/10 px-2 py-0.5 rounded-full">
+                            <Star className="h-3 w-3 fill-secondary" /> Must Know
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-muted-foreground text-sm leading-relaxed">{amendment.summary}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

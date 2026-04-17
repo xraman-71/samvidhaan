@@ -14,7 +14,9 @@ export interface ConstitutionArticle {
   status?: "active" | "repealed" | "abrogated";
 }
 
-export const allArticles: ConstitutionArticle[] = [
+import { remainingArticles } from "./remainingArticles";
+
+const coreArticles: ConstitutionArticle[] = [
 
   // ─── PART I: THE UNION AND ITS TERRITORY (1–4) ───────────────────────────
   {
@@ -1556,6 +1558,8 @@ export const allArticles: ConstitutionArticle[] = [
     examples: ["The Government of India Act 1935 was the quasi-constitutional document during British rule.", "With this article, India's Constitution completely replaced the British framework.", "This is the last of the 395 original articles of the Constitution."],
   },
 ];
+
+export const allArticles: ConstitutionArticle[] = [...coreArticles, ...remainingArticles];
 
 export const constitutionParts = [
   { id: "part-1", label: "Part I", title: "The Union and Its Territory", articles: "1–4", color: "bg-blue-100 text-blue-800" },
