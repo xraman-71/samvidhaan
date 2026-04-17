@@ -58,7 +58,7 @@ export default function About() {
 
       <section className="py-20 px-4 md:px-8">
         <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -70,37 +70,112 @@ export default function About() {
               
               <div className="prose prose-lg dark:prose-invert">
                 <p>
-                  Dr. Bhimrao Ramji Ambedkar, affectionately known as Babasaheb, was a jurist, economist, politician, and social reformer who chaired the Drafting Committee of the Constituent Assembly.
+                  Dr. Bhimrao Ramji Ambedkar, widely known as Babasaheb, was a jurist, economist, scholar, and social reformer who chaired the Drafting Committee of the Constituent Assembly. His life story is inseparable from India’s democratic promise: that dignity is not inherited — it is guaranteed.
                 </p>
                 <p>
-                  His extensive knowledge of constitutions from around the world, combined with his deep understanding of India's complex social structure, made him uniquely qualified for this monumental task. He strongly advocated for the protection of minority rights and the eradication of social inequalities through legal frameworks.
+                  Ambedkar’s constitutional vision was not abstract. It was built from lived experience of exclusion, and from rigorous study of law, economics, and political institutions across the world. He argued that rights must be practical, enforceable, and backed by remedies — not merely written ideals. That is why the Constitution places equal weight on liberty, equality, and fraternity, and why it empowers citizens to approach courts when those promises are broken.
                 </p>
                 <p>
-                  Presenting the draft Constitution, Dr. Ambedkar famously warned that political democracy must be accompanied by social democracy to survive.
+                  Presenting the draft Constitution, he warned that political democracy cannot survive without social democracy — a culture where every person is treated as equal, where discrimination is dismantled, and where the State is bound by the rule of law. His work continues to shape how India thinks about justice: from equal citizenship to safeguards for the vulnerable, from due process to the everyday meaning of freedom in a diverse society.
                 </p>
               </div>
             </motion.div>
             
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-2xl overflow-hidden shadow-xl border border-border bg-card"
-            >
-              <div className="aspect-[4/5] relative">
-                <img 
-                  src="/images/ambedkar-about.png" 
-                  alt="Dr B R Ambedkar drafting the Constitution" 
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="p-6 text-center border-t border-border">
-                <p className="italic text-muted-foreground font-serif">
-                  "Life should be great rather than long."
-                </p>
-              </div>
-            </motion.div>
+            <div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="rounded-2xl overflow-hidden shadow-xl border border-border bg-card lg:-mt-8"
+              >
+                <div className="aspect-[4/5] relative">
+                  <img 
+                    src="/images/ambedkar-about.png" 
+                    alt="Dr B R Ambedkar drafting the Constitution" 
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="p-6 text-center border-t border-border">
+                  <p className="italic text-muted-foreground font-serif">
+                    "Life should be great rather than long."
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="mt-6"
+              >
+                <div className="bg-card/70 backdrop-blur-sm border border-border rounded-3xl p-5 md:p-6 shadow-sm">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                      <p className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">
+                        Academic island
+                      </p>
+                      <p className="text-lg font-bold text-foreground mt-1">
+                        32 degrees & honors
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-xs font-semibold px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground">
+                      Individual cards
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {[
+                      ["BA", "University of Bombay"],
+                      ["BA", "University of Bombay"],
+                      ["MA", "University of Bombay"],
+                      ["MA", "University of Columbia"],
+                      ["MA", "Columbia University"],
+                      ["MSc", "London School of Economics"],
+                      ["LLD", "University of Nagpur"],
+                      ["LLD", "University of Kerala"],
+                      ["LLD", "University of Baroda"],
+                      ["LLD", "University of Mysore"],
+                      ["LLD", "University of Punjab"],
+                      ["LLD", "University of Karnataka"],
+                      ["LLD", "Columbia University"],
+                      ["LLD", "Osmania University"],
+                      ["LLD", "University of London"],
+                      ["LLD", "Nagpur University"],
+                      ["LLD", "University of Sagar"],
+                      ["LLD", "University of Rangoon"],
+                      ["LLD", "University of Bombay"],
+                      ["LLD", "University of Osmania"],
+                      ["DSc", "University of London"],
+                      ["DSc", "University of Bombay"],
+                      ["DSc", "University of Nagpur"],
+                      ["DSc", "University of Punjab"],
+                      ["DSc", "London School of Economics"],
+                      ["D.Litt.", "Osmania University"],
+                      ["D.Litt.", "Banaras Hindu University"],
+                      ["D.Litt.", "Aligarh Muslim University"],
+                      ["D.Litt.", "Columbia University"],
+                      ["D.Litt.", "Nagpur University"],
+                      ["PhD", "Columbia University"],
+                      ["Barrister-at-Law", "Gray’s Inn, London"],
+                    ].map(([degree, inst], idx) => (
+                      <div
+                        key={`${degree}-${inst}-${idx}`}
+                        className="rounded-2xl border border-border bg-background/60 px-3.5 py-3 flex items-start justify-between gap-3"
+                      >
+                        <span className="text-xs font-bold tracking-wide text-primary whitespace-nowrap">
+                          {String(idx + 1).padStart(2, "0")} · {degree}
+                        </span>
+                        <span className="text-xs text-muted-foreground text-right leading-snug line-clamp-2">
+                          {inst}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -121,6 +196,7 @@ export default function About() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

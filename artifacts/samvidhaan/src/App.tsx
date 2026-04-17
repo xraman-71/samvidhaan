@@ -12,6 +12,8 @@ import Quiz from "@/pages/quiz";
 import About from "@/pages/about";
 import Privacy from "@/pages/privacy";
 import Contact from "@/pages/contact";
+import Making from "@/pages/making";
+import Framers from "@/pages/framers";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ function Router() {
         <Route path="/article/:id" component={ArticleDetail} />
         <Route path="/quiz" component={Quiz} />
         <Route path="/about" component={About} />
+        <Route path="/framers" component={Framers} />
+        <Route path="/making" component={Making} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/contact" component={Contact} />
         <Route component={NotFound} />

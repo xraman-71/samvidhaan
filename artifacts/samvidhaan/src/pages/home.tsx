@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { BookOpen, Shield, Scale, Users, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BookOpen, Shield, Scale, Users, ArrowRight, CheckCircle2, Sparkles, Layers, Gavel, Landmark, Quote, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
 const CONSTITUTION_START = new Date("1950-01-26T10:30:00+05:30");
+const PAGE_GUTTER = "px-6 sm:px-8 lg:px-14 xl:px-20 2xl:px-28";
+const PAGE_CONTAINER = "mx-auto w-full max-w-7xl 2xl:max-w-[1440px]";
 
 function getElapsed() {
   const now = new Date();
@@ -58,10 +60,10 @@ function ConstitutionTimer() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7 }}
-      className="py-16 px-4 md:px-8 bg-primary relative overflow-hidden"
+      className={`py-16 ${PAGE_GUTTER} bg-primary relative overflow-hidden`}
     >
       <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-      <div className="container mx-auto relative z-10 text-center">
+      <div className={`${PAGE_CONTAINER} relative z-10 text-center`}>
         <p className="text-primary-foreground/60 text-sm font-medium tracking-widest uppercase mb-3">
           Constitution in Force Since 26 January 1950
         </p>
@@ -104,7 +106,9 @@ function AnimatedNumber({ value }: { value: number }) {
         setAnimating(false);
       }, 300);
       return () => clearTimeout(t);
+      
     }
+    return;
   }, [value, prev]);
 
   return (
@@ -135,16 +139,16 @@ export default function Home() {
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40 px-4 md:px-8">
+      <section className={`relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40 ${PAGE_GUTTER}`}>
         <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         
-        <div className="container mx-auto relative z-10">
+        <div className={`${PAGE_CONTAINER} relative z-10`}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
             <motion.div 
               className="max-w-2xl"
@@ -215,8 +219,8 @@ export default function Home() {
       <ConstitutionTimer />
 
       {/* Features Section */}
-      <section className="py-20 bg-muted/50 px-4 md:px-8 border-y border-border/50">
-        <div className="container mx-auto">
+      <section className={`py-20 bg-muted/50 ${PAGE_GUTTER} border-y border-border/50`}>
+        <div className={PAGE_CONTAINER}>
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold font-serif text-primary mb-4">A Trusted Civic Companion</h2>
             <p className="text-muted-foreground text-lg">
@@ -273,8 +277,8 @@ export default function Home() {
       </section>
 
       {/* Explore Teaser Section */}
-      <section className="py-24 px-4 md:px-8">
-        <div className="container mx-auto">
+      <section className={`py-24 ${PAGE_GUTTER}`}>
+        <div className={PAGE_CONTAINER}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -342,6 +346,243 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Learning Paths */}
+      <section className={`py-24 ${PAGE_GUTTER} bg-muted/30 border-y border-border/50`}>
+        <div className={PAGE_CONTAINER}>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+            <div className="max-w-2xl">
+              <p className="text-xs font-semibold tracking-widest uppercase text-secondary mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" /> Premium learning paths
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif text-primary mb-3">
+                Learn by intent, not by page number
+              </h2>
+              <p className="text-muted-foreground text-lg">
+                Curated journeys that feel modern: bite-sized, scenario-first, and designed to build real civic confidence.
+              </p>
+            </div>
+            <Link href="/explore">
+              <Button size="lg" variant="outline" className="h-12 px-6 border-primary/20 hover:bg-primary/5">
+                Browse everything <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {[
+              {
+                icon: Compass,
+                title: "Citizen Starter Pack",
+                description: "A premium overview of the rights and remedies that show up in everyday life — from freedom to due process.",
+                bullets: ["Rights that matter daily", "Court remedies, simplified", "Common misconceptions"],
+                accent: "text-secondary",
+                bg: "bg-secondary/10",
+              },
+              {
+                icon: Layers,
+                title: "How Government Works",
+                description: "A clean mental model of Parliament, executive power, courts, and how accountability is designed to work.",
+                bullets: ["Bills → laws", "Checks & balances", "Institutions decoded"],
+                accent: "text-primary",
+                bg: "bg-primary/10",
+              },
+              {
+                icon: Landmark,
+                title: "Democracy in Practice",
+                description: "Elections, citizenship, and participation — the civic layer every voter and student should know.",
+                bullets: ["Voting basics", "Citizenship concepts", "Practical civic actions"],
+                accent: "text-accent",
+                bg: "bg-accent/10",
+              },
+            ].map((p, idx) => (
+              <motion.div
+                key={idx}
+                variants={item}
+                className="bg-card rounded-3xl border border-border shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+              >
+                <div className="p-7">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${p.bg} ${p.accent} mb-5`}>
+                    <p.icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{p.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed mb-5">{p.description}</p>
+                  <ul className="space-y-2">
+                    {p.bullets.map((b) => (
+                      <li key={b} className="text-sm text-foreground/80 flex items-center gap-2">
+                        <span className={`h-1.5 w-1.5 rounded-full ${p.accent.replace("text-", "bg-")}`} />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="px-7 pb-7">
+                  <Link href="/quiz">
+                    <Button className="w-full h-11" variant="secondary">
+                      Start a quiz <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Constitution in Action Timeline */}
+      <section className={`py-24 ${PAGE_GUTTER}`}>
+        <div className={PAGE_CONTAINER}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-xs font-semibold tracking-widest uppercase text-secondary mb-3 flex items-center gap-2">
+                <Gavel className="h-4 w-4" /> Constitution in action
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif text-primary mb-4">
+                From text to lived experience
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                The Constitution isn’t just history — it’s a working system. These are the moments where rights, institutions,
+                and remedies become real in daily life.
+              </p>
+
+              <div className="bg-card rounded-3xl border border-border p-7 shadow-sm">
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Quote className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">A modern civic reminder</p>
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-foreground">
+                      Rights feel premium only when they are usable. The best constitution is the one a citizen can actually apply.
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-3">
+                      Built for clarity, not intimidation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.ol
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-120px" }}
+              className="space-y-4"
+            >
+              {[
+                {
+                  k: "Equality",
+                  title: "When a rule treats people unfairly",
+                  desc: "Learn how equality principles shape policies and how courts test arbitrariness.",
+                  tag: "Articles 14–16",
+                },
+                {
+                  k: "Liberty",
+                  title: "When your freedom is restricted",
+                  desc: "Understand due process, safeguards, and how ‘procedure’ became ‘just, fair, reasonable’.",
+                  tag: "Articles 19–22",
+                },
+                {
+                  k: "Dignity",
+                  title: "When life and privacy are at stake",
+                  desc: "See how modern judgments expanded Article 21 to dignity, privacy, and humane governance.",
+                  tag: "Article 21",
+                },
+                {
+                  k: "Remedy",
+                  title: "When you need a constitutional fix",
+                  desc: "Know the idea of writs and how remedies are the bridge between rights and reality.",
+                  tag: "Articles 32 & 226",
+                },
+              ].map((t, idx) => (
+                <motion.li
+                  key={idx}
+                  variants={item}
+                  className="bg-card border border-border rounded-3xl p-6 md:p-7 shadow-sm hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold tracking-widest uppercase text-muted-foreground mb-2">
+                        {t.k}
+                      </p>
+                      <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">{t.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{t.desc}</p>
+                    </div>
+                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground whitespace-nowrap">
+                      {t.tag}
+                    </span>
+                  </div>
+                </motion.li>
+              ))}
+            </motion.ol>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium CTA */}
+      <section className={`py-24 ${PAGE_GUTTER} bg-primary text-primary-foreground relative overflow-hidden`}>
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '30px 30px' }} />
+        <div className={`${PAGE_CONTAINER} relative z-10`}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-primary-foreground/70 text-xs font-semibold tracking-widest uppercase mb-3">
+                Premium learning experience
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">
+                Make civic knowledge your advantage
+              </h2>
+              <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8">
+                Explore the Constitution with modern design, real-world framing, and a smoother path from curiosity to clarity.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/explore">
+                  <Button size="lg" className="h-12 px-8 bg-white text-primary hover:bg-white/90">
+                    Explore now <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button size="lg" variant="outline" className="h-12 px-8 border-white/30 text-white hover:bg-white/10">
+                    Why it matters
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { icon: Shield, title: "Rights-first", desc: "Start from what you face, then learn the article." },
+                { icon: BookOpen, title: "Plain language", desc: "No intimidation. Just clarity, structure, and examples." },
+                { icon: Scale, title: "Real scenarios", desc: "Learn how principles apply outside textbooks." },
+                { icon: Users, title: "For everyone", desc: "Students, voters, professionals — all welcome." },
+              ].map((b, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-5"
+                >
+                  <b.icon className="h-5 w-5 text-white mb-3" />
+                  <p className="font-semibold mb-1">{b.title}</p>
+                  <p className="text-sm text-primary-foreground/75 leading-relaxed">{b.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

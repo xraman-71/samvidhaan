@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Search, Book, Shield, History, ChevronRight, BookOpen, Filter, X, Star, Calendar, Landmark } from "lucide-react";
@@ -189,6 +189,12 @@ export default function Explore() {
               <History className="w-4 h-4 mr-2" /> Amendments
               <span className="ml-2 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">106</span>
             </TabsTrigger>
+            <Link href="/framers">
+              <button className="rounded-lg py-2.5 px-4 text-sm font-medium text-muted-foreground hover:text-primary transition-colors border border-transparent hover:border-border flex items-center">
+                <Book className="w-4 h-4 mr-2" />
+                The Constitution Framers
+              </button>
+            </Link>
           </TabsList>
 
           {/* ALL ARTICLES TAB */}
