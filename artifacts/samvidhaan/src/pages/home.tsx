@@ -2,6 +2,129 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { BookOpen, Shield, Scale, Users, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+
+const CONSTITUTION_START = new Date("1950-01-26T10:30:00+05:30");
+
+function getElapsed() {
+  const now = new Date();
+  const diff = now.getTime() - CONSTITUTION_START.getTime();
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const minutes = totalMinutes % 60;
+  const totalHours = Math.floor(totalMinutes / 60);
+  const hours = totalHours % 24;
+  const totalDays = Math.floor(totalHours / 24);
+
+  let years = now.getFullYear() - CONSTITUTION_START.getFullYear();
+  let months = now.getMonth() - CONSTITUTION_START.getMonth();
+  let days = now.getDate() - CONSTITUTION_START.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years, months, days, hours, minutes, seconds, totalDays };
+}
+
+function ConstitutionTimer() {
+  const [elapsed, setElapsed] = useState(getElapsed);
+
+  useEffect(() => {
+    const id = setInterval(() => setElapsed(getElapsed()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const units = [
+    { label: "Years",   value: elapsed.years },
+    { label: "Months",  value: elapsed.months },
+    { label: "Days",    value: elapsed.days },
+    { label: "Hours",   value: elapsed.hours },
+    { label: "Minutes", value: elapsed.minutes },
+    { label: "Seconds", value: elapsed.seconds },
+  ];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7 }}
+      className="py-16 px-4 md:px-8 bg-primary relative overflow-hidden"
+    >
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+      <div className="container mx-auto relative z-10 text-center">
+        <p className="text-primary-foreground/60 text-sm font-medium tracking-widest uppercase mb-3">
+          Constitution in Force Since 26 January 1950
+        </p>
+        <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary-foreground mb-10">
+          The World's Longest Written Constitution — Still Going Strong
+        </h2>
+
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+          {units.map(({ label, value }, i) => (
+            <motion.div
+              key={label}
+              className="flex flex-col items-center"
+            >
+              <div className="relative w-20 md:w-24 h-20 md:h-24 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center overflow-hidden">
+                <AnimatedNumber value={value} />
+              </div>
+              <span className="mt-2 text-xs font-semibold text-primary-foreground/70 uppercase tracking-wider">
+                {label}
+              </span>
+              {i < units.length - 1 && (
+                <span className="hidden md:block absolute text-2xl font-bold text-primary-foreground/40 mt-[-3.5rem] ml-[6.5rem]">:</span>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="mt-10 text-primary-foreground/50 text-sm">
+          and counting… · {elapsed.totalDays.toLocaleString("en-IN")} total days of constitutional democracy
+        </p>
+      </div>
+    </motion.section>
+  );
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [prev, setPrev] = useState(value);
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    if (value !== prev) {
+      setAnimating(true);
+      const t = setTimeout(() => {
+        setPrev(value);
+        setAnimating(false);
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [value, prev]);
+
+  return (
+    <div className="relative h-full w-full flex items-center justify-center">
+      <motion.span
+        key={value}
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="text-2xl md:text-3xl font-bold text-white tabular-nums"
+      >
+        {String(value).padStart(2, "0")}
+      </motion.span>
+    </div>
+  );
+}
 
 export default function Home() {
   const container = {
@@ -92,6 +215,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ConstitutionTimer />
 
       {/* Features Section */}
       <section className="py-20 bg-muted/50 px-4 md:px-8 border-y border-border/50">
