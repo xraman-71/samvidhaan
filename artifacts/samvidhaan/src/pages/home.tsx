@@ -87,10 +87,6 @@ function ConstitutionTimer() {
             </motion.div>
           ))}
         </div>
-
-        <p className="mt-10 text-primary-foreground/50 text-sm">
-          and counting… · {elapsed.totalDays.toLocaleString("en-IN")} total days of constitutional democracy
-        </p>
       </div>
     </motion.section>
   );
