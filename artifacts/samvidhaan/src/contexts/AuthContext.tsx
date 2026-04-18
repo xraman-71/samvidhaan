@@ -171,14 +171,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Forced initialization to ensure it appears in Console
         set(userRef, encodeUser(newUser))
-          .then(() => console.log("Samvidhaan Cloud: Profile successfully added to Firebase!"))
-          .catch(err => console.error("Samvidhaan Cloud: Error adding profile:", err));
+          .then(() => {
+            console.log("Samvidhaan Cloud: Profile successfully added to Firebase!");
+            // alert("Success! Your profile is now in Firebase.");
+          })
+          .catch(err => {
+            console.error("Samvidhaan Cloud: Error adding profile:", err);
+            alert("FIREBASE ERROR: Cannot write to database. Check your Rules or Database URL! \n\n" + err.message);
+          });
         
         setUser(newUser);
         setDataLoaded(true);
       }
     }, (error) => {
       console.error("Samvidhaan Cloud: Connection error:", error);
+      alert("DATABASE CONNECTION FAILED! \n\nReason: " + error.message + "\n\nPlease check your .env VITE_FIREBASE_DATABASE_URL");
       setDataLoaded(true);
     });
 
