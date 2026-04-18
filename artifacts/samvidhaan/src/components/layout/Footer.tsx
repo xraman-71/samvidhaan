@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { AshokaChakra } from "./AshokaChakra";
-import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github, AlertCircle } from "lucide-react";
+import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github, AlertCircle, Sun, Moon, Smartphone } from "lucide-react";
 import { useUserData } from "@/hooks/use-user-data";
 
 const PAGE_GUTTER = "px-6 sm:px-8 lg:px-14 xl:px-20 2xl:px-28";
@@ -232,6 +232,20 @@ export function Footer() {
               >
                 <option value="en">English</option>
                 <option value="hi">हिन्दी</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 border border-border/50">
+              <Sun className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mr-1">Theme:</span>
+              <select 
+                value={settings.theme}
+                onChange={(e) => updateSettings({ theme: e.target.value as any })}
+                className="bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+                title="Select Interface Theme"
+              >
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="system">System</option>
               </select>
             </div>
             <div className="flex items-center gap-5">
