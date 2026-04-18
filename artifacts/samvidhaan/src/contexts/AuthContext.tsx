@@ -90,7 +90,13 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserData>(DEFAULT_USER);
   const [fbUser, setFbUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
   const [dataLoaded, setDataLoaded] = useState(false);
+
+  const [settings, setSettings] = useState<Settings>(() => {
+    const saved = localStorage.getItem("samvidhaan_settings");
+    return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
+  });
 
   // Single global auth listener
   useEffect(() => {
