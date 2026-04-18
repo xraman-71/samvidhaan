@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { BookOpen, Map, HelpCircle, Info, Menu, X, ScrollText, Users, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "./AshokaChakra";
+import { useUserData } from "@/hooks/use-user-data";
 
 export function Header() {
   const { t } = useTranslation();
