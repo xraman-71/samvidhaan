@@ -1,7 +1,6 @@
 import React from "react";
 
-export function AshokaChakra({ className = "w-6 h-6", ...props }: React.SVGProps<SVGSVGElement>) {
-  // The Ashoka Chakra has 24 spokes.
+export const AshokaChakra = React.memo(({ className = "w-6 h-6", ...props }: React.SVGProps<SVGSVGElement>) => {
   const spokes = Array.from({ length: 24 });
   
   return (
@@ -12,13 +11,8 @@ export function AshokaChakra({ className = "w-6 h-6", ...props }: React.SVGProps
       className={className}
       {...props}
     >
-      {/* Outer circle */}
       <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="6" />
-      
-      {/* Inner circle */}
       <circle cx="50" cy="50" r="8" fill="currentColor" />
-      
-      {/* 24 Spokes */}
       <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         {spokes.map((_, i) => {
           const angle = (i * 360) / 24;
@@ -36,4 +30,4 @@ export function AshokaChakra({ className = "w-6 h-6", ...props }: React.SVGProps
       </g>
     </svg>
   );
-}
+});
