@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { AshokaChakra } from "./AshokaChakra";
-import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github } from "lucide-react";
+import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github, AlertCircle } from "lucide-react";
 
 const PAGE_GUTTER = "px-6 sm:px-8 lg:px-14 xl:px-20 2xl:px-28";
 const PAGE_CONTAINER = "mx-auto w-full max-w-7xl 2xl:max-w-[1440px]";
@@ -194,6 +194,18 @@ export function Footer() {
               </a>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Disclaimer Section */}
+      <div className={`py-6 ${PAGE_GUTTER} border-t border-border/20 bg-muted/20 relative z-10`}>
+        <div className={`${PAGE_CONTAINER} flex gap-4 items-start`}>
+          <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 shrink-0 mt-0.5 border border-amber-500/20">
+            <AlertCircle className="w-4 h-4" />
+          </div>
+          <p className="text-[11px] leading-relaxed text-muted-foreground font-medium max-w-5xl">
+            <strong className="text-foreground uppercase tracking-widest text-[10px]">Disclaimer:</strong> The content provided on Samvidhaan+ is for educational and informational purposes only and does not constitute official legal advice. While every effort is made to ensure the accuracy of the articles and amendments, there may be inadvertent errors, omissions, or delays in updates. In case of any discrepancies or for formal legal matters, please refer exclusively to the official gazette notifications and certified documents published by the Government of India.
+          </p>
         </div>
       </div>
 
