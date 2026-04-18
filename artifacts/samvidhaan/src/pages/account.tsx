@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { motion, Variants } from "framer-motion";
 import { Link } from "wouter";
 import {
@@ -31,8 +32,15 @@ export default function Account() {
   const { user, fbUser, loading, signInWithGoogle } = useUserData();
   const { t } = useTranslation();
 
-  const displayActivity = (user?.activity || []).slice(0, 6);
-  const displayBookmarks = (user?.saved || []).slice(0, 6);
+  const displayActivity = useMemo(() => (user?.activity || []).slice(0, 6), [user?.activity]);
+  const displayBookmarks = useMemo(() => (user?.saved || []).slice(0, 6), [user?.saved]);
+
+  const stats = useMemo(() => [
+    { icon: BookOpen, label: t('account.articles_read'), value: user.articlesRead, color: "text-primary", bg: "bg-primary/5" },
+    { icon: Trophy, label: t('account.quiz_accuracy'), value: `${user.quizScore}%`, color: "text-secondary", bg: "bg-secondary/5" },
+    { icon: Zap, label: t('account.day_streak'), value: user.streak, color: "text-accent", bg: "bg-accent/5" },
+    { icon: BookMarked, label: t('account.saved_items'), value: user.bookmarks, color: "text-primary", bg: "bg-primary/5" },
+  ], [user.articlesRead, user.quizScore, user.streak, user.bookmarks, t]);
 
   if (loading) {
     return (
@@ -111,13 +119,6 @@ export default function Account() {
       </div>
     );
   }
-
-  const stats = [
-    { icon: BookOpen, label: t('account.articles_read'), value: user.articlesRead, color: "text-primary", bg: "bg-primary/5" },
-    { icon: Trophy, label: t('account.quiz_accuracy'), value: `${user.quizScore}%`, color: "text-secondary", bg: "bg-secondary/5" },
-    { icon: Zap, label: t('account.day_streak'), value: user.streak, color: "text-accent", bg: "bg-accent/5" },
-    { icon: BookMarked, label: t('account.saved_items'), value: user.bookmarks, color: "text-primary", bg: "bg-primary/5" },
-  ];
 
   return (
     <div className="min-h-screen bg-[#fafafa] dark:bg-[#080808]">
