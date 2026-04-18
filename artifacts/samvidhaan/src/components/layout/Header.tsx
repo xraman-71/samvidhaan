@@ -9,6 +9,7 @@ import { AshokaChakra } from "./AshokaChakra";
 export function Header() {
   const { t } = useTranslation();
   const [location] = useLocation();
+  const { fbUser, user, signInWithGoogle } = useUserData();
 
   const navLinks = [
     { href: "/", label: t('nav.home'), icon: BookOpen },
@@ -91,15 +92,32 @@ export function Header() {
 
           {/* Desktop Account CTA */}
           <div className="hidden md:flex items-center">
-            <Link href="/account">
+            {fbUser ? (
+              <Link href="/account">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-10 px-4 rounded-xl hover:bg-primary/5 group transition-all duration-200 flex items-center gap-3"
+                >
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs font-bold text-foreground leading-none">{user.name}</span>
+                    <span className="text-[10px] font-medium text-muted-foreground leading-none mt-1">{user.level}</span>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs group-hover:bg-primary group-hover:text-white transition-all">
+                    {user.avatar}
+                  </div>
+                </Button>
+              </Link>
+            ) : (
               <Button
                 size="sm"
+                onClick={signInWithGoogle}
                 className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-primary/20 hover:-translate-y-px transition-all duration-200 font-semibold text-sm gap-2"
               >
                 <User className="h-3.5 w-3.5" />
-                Account
+                Sign In
               </Button>
-            </Link>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -110,6 +128,7 @@ export function Header() {
                 : "bg-muted border-border text-foreground hover:border-border/80"
             }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            title={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen ? "true" : "false"}
           >
@@ -187,12 +206,25 @@ export function Header() {
 
             {/* Mobile Account CTA */}
             <div className="mt-4 pt-4 border-t border-border pb-2">
-              <Link href="/account" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2">
+              {fbUser ? (
+                <Link href="/account" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2">
+                    <User className="h-5 w-5" />
+                    My Account
+                  </Button>
+                </Link>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    signInWithGoogle();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2"
+                >
                   <User className="h-5 w-5" />
-                  My Account
+                  Sign In with Google
                 </Button>
-              </Link>
+              )}
             </div>
           </motion.nav>
         </div>

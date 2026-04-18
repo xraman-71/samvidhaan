@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
 import i18n from "@/lib/i18n";
+import { auth, googleProvider, db } from "@/lib/firebase";
+import { 
+  signInWithPopup, 
+  signOut as firebaseSignOut, 
+  onAuthStateChanged,
+  User as FirebaseUser 
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
-// Initial mock data
-const INITIAL_USER = {
-  name: "Arjun Sharma",
-  email: "arjun.sharma@example.com",
-  joined: "January 2024",
-  avatar: "AS",
-  level: "Constitutional Scholar",
-  location: "New Delhi, India",
-  articlesRead: 48,
-  quizScore: 87,
-  streak: 14,
-  bookmarks: 12,
+// Initial mock/default data
+const DEFAULT_USER = {
+  name: "Guest Scholar",
+  email: "",
+  joined: "",
+  avatar: "??",
+  level: "Beginner",
+  location: "India",
+  articlesRead: 0,
+  quizScore: 0,
+  streak: 0,
+  bookmarks: 0,
 };
 
 const INITIAL_SETTINGS = {
@@ -25,19 +33,49 @@ const INITIAL_SETTINGS = {
 };
 
 export function useUserData() {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("samvidhaan_user");
-    return saved ? JSON.parse(saved) : INITIAL_USER;
-  });
+  const [user, setUser] = useState<any>(DEFAULT_USER);
+  const [fbUser, setFbUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem("samvidhaan_settings");
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
+  // Listen for Auth changes
   useEffect(() => {
-    localStorage.setItem("samvidhaan_user", JSON.stringify(user));
-  }, [user]);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setFbUser(user);
+      if (user) {
+        // Fetch additional data from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          setUser(userDoc.data());
+        } else {
+          // Initialize new user in Firestore
+          const newUser = {
+            name: user.displayName || "Scholar",
+            email: user.email || "",
+            joined: new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
+            avatar: (user.displayName || "S").split(" ").map(n => n[0]).join("").toUpperCase(),
+            level: "Aspirant",
+            location: "India",
+            articlesRead: 0,
+            quizScore: 0,
+            streak: 1,
+            bookmarks: 0,
+          };
+          await setDoc(doc(db, "users", user.uid), newUser);
+          setUser(newUser);
+        }
+      } else {
+        setUser(DEFAULT_USER);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("samvidhaan_settings", JSON.stringify(settings));
@@ -59,19 +97,35 @@ export function useUserData() {
     }
   }, [settings]);
 
-  const updateProfile = (data: Partial<typeof INITIAL_USER>) => {
-    setUser((prev: any) => ({ ...prev, ...data }));
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
+
+  const updateProfile = async (data: Partial<typeof DEFAULT_USER>) => {
+    if (fbUser) {
+      const updatedUser = { ...user, ...data };
+      setUser(updatedUser);
+      await setDoc(doc(db, "users", fbUser.uid), updatedUser, { merge: true });
+    }
   };
 
   const updateSettings = (data: Partial<typeof INITIAL_SETTINGS>) => {
     setSettings((prev: any) => ({ ...prev, ...data }));
   };
 
-  const signOut = () => {
-    // Logic for sign out
-    console.log("Signing out...");
-    window.location.href = "/";
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
-  return { user, settings, updateProfile, updateSettings, signOut };
+  return { user, fbUser, loading, settings, updateProfile, updateSettings, signInWithGoogle, signOut };
 }
+
