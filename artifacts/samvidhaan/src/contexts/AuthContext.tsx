@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 1. Initial Load: Instant recovery from cache (for UI only, doesn't clear loading)
+  // 1. Initial Load: Instant recovery from cache
   useEffect(() => {
     const lastUid = localStorage.getItem("samvidhaan_last_uid");
     if (lastUid) {
@@ -126,7 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (cached) {
         try {
           setUser(JSON.parse(cached));
-          // We don't set loading to false here to avoid redirecting too early
         } catch (e) {}
       }
     }
@@ -135,7 +134,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 2. Auth & Realtime Sync
   useEffect(() => {
     let dbUnsubscribe: (() => void) | null = null;
-    let isFirstAuth = true;
 
     const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setFbUser(firebaseUser);
@@ -144,32 +142,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(DEFAULT_USER);
         localStorage.removeItem("samvidhaan_last_uid");
         setDataLoaded(true);
-        setLoading(false); // Auth is determined (none)
+        setLoading(false); // Auth is determined (None)
         if (dbUnsubscribe) dbUnsubscribe();
         return;
       }
 
-      // Record this UID to help with next boot's cache lookup
+      // Record this UID for next boot
       localStorage.setItem("samvidhaan_last_uid", firebaseUser.uid);
+      
+      // AUTH IS DETERMINED - Stop blocking the app!
+      setLoading(false); 
 
-      // Check for scoped cache for this specific user
+      // Check for scoped cache
       const cacheKey = `samvidhaan_cache_${firebaseUser.uid}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         try {
           setUser(JSON.parse(cached));
+          setDataLoaded(true);
         } catch (e) {}
       }
 
-      // After the first auth check, we can allow the app to render the protected routes
-      // IF we have cached data, we can stop loading now. 
-      // OTHERWISE, we wait for the first real DB value.
-      if (isFirstAuth && cached) {
-        setLoading(false);
-        isFirstAuth = false;
-      }
-
-      // Set up realtime listener for this specific user
+      // Set up realtime listener for data sync
       const userRef = ref(db, `users/${firebaseUser.uid}`);
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -177,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(decoded);
           localStorage.setItem(cacheKey, JSON.stringify(decoded));
         } else {
-          // New User Initialization
+          // Initialize New User
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -194,15 +188,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(newUser);
           localStorage.setItem(cacheKey, JSON.stringify(newUser));
         }
-        
         setDataLoaded(true);
-        setLoading(false); // Data is officially from DB now
-        isFirstAuth = false;
       }, (error) => {
         console.error("Sync error:", error);
-        setLoading(false);
         setDataLoaded(true);
-        isFirstAuth = false;
       });
 
       dbUnsubscribe = onValueUnsubscribe;

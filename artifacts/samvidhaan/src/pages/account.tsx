@@ -29,7 +29,7 @@ const ICON_MAP: Record<string, any> = {
 };
 
 export default function Account() {
-  const { user, fbUser, loading, signInWithGoogle } = useUserData();
+  const { user, fbUser, loading, dataLoaded, signInWithGoogle } = useUserData();
   const { t } = useTranslation();
 
   const displayActivity = useMemo(() => (user?.activity || []).slice(0, 6), [user?.activity]);
@@ -42,7 +42,7 @@ export default function Account() {
     { icon: BookMarked, label: t('account.saved_items'), value: user.bookmarks, color: "text-primary", bg: "bg-primary/5" },
   ], [user.articlesRead, user.quizScore, user.streak, user.bookmarks, t]);
 
-  if (loading) {
+  if (!dataLoaded && fbUser) {
     return (
       <div className="min-h-screen bg-[#fafafa] dark:bg-[#080808] animate-pulse">
         <div className={`pt-12 pb-8 ${PAGE_GUTTER} border-b border-border/40 bg-white dark:bg-black/20`}>
