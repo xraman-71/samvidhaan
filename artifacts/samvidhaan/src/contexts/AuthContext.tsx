@@ -162,7 +162,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // After the first auth check, we can allow the app to render the protected routes
-      if (isFirstAuth) {
+      // IF we have cached data, we can stop loading now. 
+      // OTHERWISE, we wait for the first real DB value.
+      if (isFirstAuth && cached) {
         setLoading(false);
         isFirstAuth = false;
       }
@@ -171,12 +173,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userRef = ref(db, `users/${firebaseUser.uid}`);
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
-          const decoded = decodeUser(snapshot.val() as CompressedUser);
+          const decoded = decodeUser(snapshot.val());
           setUser(decoded);
           localStorage.setItem(cacheKey, JSON.stringify(decoded));
-          setDataLoaded(true);
-          setLoading(false);
         } else {
+          // New User Initialization
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -192,13 +193,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           set(userRef, encodeUser(newUser));
           setUser(newUser);
           localStorage.setItem(cacheKey, JSON.stringify(newUser));
-          setDataLoaded(true);
-          setLoading(false);
         }
+        
+        setDataLoaded(true);
+        setLoading(false); // Data is officially from DB now
+        isFirstAuth = false;
       }, (error) => {
         console.error("Sync error:", error);
         setLoading(false);
         setDataLoaded(true);
+        isFirstAuth = false;
       });
 
       dbUnsubscribe = onValueUnsubscribe;
