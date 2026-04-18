@@ -135,9 +135,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log("Samvidhaan Cloud: Syncing session for", user.email);
 
+      // FAIL-SAFE: If database takes > 5s, unlock the UI anyway
+      const failSafe = setTimeout(() => {
+        console.warn("Samvidhaan Cloud: Connection taking too long. Unlocking UI...");
+        setDataLoaded(true);
+        setLoading(false);
+      }, 5000);
+
       try {
         const userRef = ref(db, `users/${user.uid}`);
         const snapshot = await get(userRef);
+        clearTimeout(failSafe); // Got data, cancel fail-safe
 
         if (!snapshot.exists()) {
           console.log("Samvidhaan Cloud: Creating new scholar profile...");
@@ -163,8 +171,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
       } catch (error: any) {
+        clearTimeout(failSafe);
         console.error("Samvidhaan Cloud: Sync failed:", error.code, error.message);
-        // alert("Cloud Sync Failed: " + error.message);
       } finally {
         setDataLoaded(true);
         setLoading(false);
