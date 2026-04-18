@@ -253,7 +253,6 @@ export function Footer() {
                 { label: "Privacy", href: "/privacy" },
                 { label: "Contact", href: "/contact" },
                 { label: t('nav.about'), href: "/about" },
-                { label: "Settings", href: "/settings" },
               ].map((l) => (
                 <Link key={l.label} href={l.href}>
                   <span className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer">{l.label}</span>

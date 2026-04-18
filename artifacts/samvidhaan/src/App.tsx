@@ -15,7 +15,7 @@ import Privacy from "@/pages/privacy";
 import Contact from "@/pages/contact";
 import Making from "@/pages/making";
 import Framers from "@/pages/framers";
-import SettingsPage from "@/pages/settings";
+import LoginPage from "@/pages/login";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -27,7 +27,7 @@ function ProtectedRoute({ component: Component, path }: { component: any; path: 
 
   useEffect(() => {
     if (!loading && !fbUser) {
-      setLocation("/");
+      setLocation("/login");
     }
   }, [fbUser, loading, setLocation]);
 
@@ -55,7 +55,7 @@ function Router() {
         <Route path="/making" component={Making} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/contact" component={Contact} />
-        <ProtectedRoute path="/settings" component={SettingsPage} />
+        <Route path="/login" component={LoginPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

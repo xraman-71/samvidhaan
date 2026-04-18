@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { BookOpen, Map, HelpCircle, Info, Menu, X, ScrollText, Users, User } from "lucide-react";
+import { BookOpen, Map, HelpCircle, Info, Menu, X, ScrollText, Users, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "./AshokaChakra";
 import { useUserData } from "@/hooks/use-user-data";
@@ -10,7 +10,7 @@ import { useUserData } from "@/hooks/use-user-data";
 export function Header() {
   const { t } = useTranslation();
   const [location] = useLocation();
-  const { fbUser, user, signInWithGoogle } = useUserData();
+  const { fbUser, user, signInWithGoogle, signOut } = useUserData();
 
   const navLinks = [
     { href: "/", label: t('nav.home'), icon: BookOpen },
@@ -92,32 +92,35 @@ export function Header() {
           </nav>
 
           {/* Desktop Account CTA */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
             {fbUser ? (
-              <Link href="/settings">
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-bold text-foreground leading-none">{user.name}</span>
+                  <span className="text-[10px] font-medium text-muted-foreground leading-none mt-1">{user.level}</span>
+                </div>
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs">
+                  {user.avatar}
+                </div>
                 <Button
                   size="sm"
-                  variant="ghost"
-                  className="h-10 px-4 rounded-xl hover:bg-primary/5 group transition-all duration-200 flex items-center gap-3"
+                  variant="outline"
+                  onClick={() => signOut()}
+                  className="h-8 px-3 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/5 font-bold text-[10px] uppercase tracking-widest"
                 >
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-bold text-foreground leading-none">{user.name}</span>
-                    <span className="text-[10px] font-medium text-muted-foreground leading-none mt-1">{user.level}</span>
-                  </div>
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-black text-xs group-hover:bg-primary group-hover:text-white transition-all">
-                    {user.avatar}
-                  </div>
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button
+                  size="sm"
+                  className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-primary/20 hover:-translate-y-px transition-all duration-200 font-semibold text-sm gap-2"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  Sign In
                 </Button>
               </Link>
-            ) : (
-              <Button
-                size="sm"
-                onClick={signInWithGoogle}
-                className="h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-primary/20 hover:-translate-y-px transition-all duration-200 font-semibold text-sm gap-2"
-              >
-                <User className="h-3.5 w-3.5" />
-                Sign In
-              </Button>
             )}
           </div>
 
@@ -208,23 +211,23 @@ export function Header() {
             {/* Mobile Account CTA */}
             <div className="mt-4 pt-4 border-t border-border pb-2">
               {fbUser ? (
-                <Link href="/settings" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2">
-                    <User className="h-5 w-5" />
-                    Settings
-                  </Button>
-                </Link>
-              ) : (
                 <Button 
                   onClick={() => {
-                    signInWithGoogle();
+                    signOut();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2"
+                  className="w-full h-12 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/15 font-semibold text-base gap-2 border border-destructive/20"
                 >
-                  <User className="h-5 w-5" />
-                  Sign In with Google
+                  <LogOut className="h-5 w-5" />
+                  Sign Out
                 </Button>
+              ) : (
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2">
+                    <User className="h-5 w-5" />
+                    Sign In
+                  </Button>
+                </Link>
               )}
             </div>
           </motion.nav>
