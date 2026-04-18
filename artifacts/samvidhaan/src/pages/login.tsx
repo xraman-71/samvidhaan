@@ -1,14 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "wouter";
-import { useTranslation } from "react-i18next";
 import { Shield, ArrowRight, Lock, CheckCircle2, Globe, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "@/components/layout/AshokaChakra";
 import { useUserData } from "@/hooks/use-user-data";
 
 export default function LoginPage() {
-  const { t } = useTranslation();
   const { fbUser, signInWithGoogle } = useUserData();
   const [, setLocation] = useLocation();
 
