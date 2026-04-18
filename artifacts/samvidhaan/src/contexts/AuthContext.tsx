@@ -138,6 +138,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log("Samvidhaan Cloud: Connecting to database for", fbUser.email);
     const userRef = ref(db, `users/${fbUser.uid}`);
     
+    // Explicit Handshake Check
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        console.log("Samvidhaan Cloud: Connection STATUS: ONLINE");
+      } else {
+        console.warn("Samvidhaan Cloud: Connection STATUS: OFFLINE (Check your Internet or Database URL)");
+      }
+    });
+
     const onValueUnsubscribe = onValue(userRef, (snapshot) => {
       if (snapshot.exists()) {
         console.log("Samvidhaan Cloud: Data received from Firebase.");
