@@ -4,8 +4,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import {
   User, Sun, Moon, Smartphone, Camera, Globe, Check,
-  LogOut, ArrowLeft, Shield, Star, HelpCircle, Trophy,
-  Zap, ChevronRight, AlertTriangle, Bell, Lock, Eye, Settings
+  LogOut, ArrowLeft, Star, HelpCircle, Trophy,
+  Zap, ChevronRight, Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "@/components/layout/AshokaChakra";
@@ -133,7 +133,6 @@ export default function SettingsPage() {
   const tabs = [
     { label: "General", desc: "Identity & Core", icon: User },
     { label: "Preferences", desc: "Experience & UI", icon: Zap },
-    { label: "Security", desc: "Access & Privacy", icon: Shield },
   ];
 
   return (
@@ -192,21 +191,7 @@ export default function SettingsPage() {
               </button>
             ))}
 
-            <div className="pt-8 mt-8 border-t border-border/40">
-              <button
-                onClick={() => setActiveTab("Danger")}
-                title="Security Terminal"
-                aria-label="Security Terminal"
-                className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-bold transition-all border ${
-                  activeTab === "Danger" 
-                    ? "bg-red-500/10 text-red-500 border-red-500/20" 
-                    : "text-red-500/60 hover:bg-red-500/5 hover:text-red-500 border-transparent"
-                }`}
-              >
-                <AlertTriangle className="h-5 w-5 shrink-0" />
-                <span>Security Terminal</span>
-              </button>
-            </div>
+
           </div>
 
           {/* Settings Viewport */}
@@ -329,21 +314,7 @@ export default function SettingsPage() {
                 </SectionCard>
               )}
 
-              {activeTab === "Security" && (
-                <SectionCard key="security" title="Access Control" icon={Shield}>
-                  <SettingRow icon={Bell} label={t('settings.notifications')} desc={t('settings.notifications_desc')}>
-                    <Toggle isOn={settings.quizReminders} onToggle={() => updateSettings({ quizReminders: !settings.quizReminders })} label="Toggle quiz reminders" />
-                  </SettingRow>
 
-                  <SettingRow icon={Eye} label="Confidential Identity" desc="Hide your profile from public leaderboards and search">
-                    <Toggle isOn={false} onToggle={() => {}} label="Toggle private profile" />
-                  </SettingRow>
-
-                  <SettingRow icon={Lock} label="Two-Factor Protocol" desc="Add an extra layer of security to your scholar account">
-                    <Button variant="outline" size="sm" className="h-8 rounded-lg text-[10px] font-black uppercase tracking-widest px-4">Initialize</Button>
-                  </SettingRow>
-                </SectionCard>
-              )}
             </AnimatePresence>
           </div>
         </div>
