@@ -98,29 +98,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 1. Auth & Realtime Sync
+  // 1. Initial Load: Instant recovery from cache (for UI only, doesn't clear loading)
+  useEffect(() => {
+    const lastUid = localStorage.getItem("samvidhaan_last_uid");
+    if (lastUid) {
+      const cached = localStorage.getItem(`samvidhaan_cache_${lastUid}`);
+      if (cached) {
+        try {
+          setUser(JSON.parse(cached));
+          // We don't set loading to false here to avoid redirecting too early
+        } catch (e) {}
+      }
+    }
+  }, []);
+
+  // 2. Auth & Realtime Sync
   useEffect(() => {
     let dbUnsubscribe: (() => void) | null = null;
+    let isFirstAuth = true;
 
     const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setFbUser(firebaseUser);
       
       if (!firebaseUser) {
         setUser(DEFAULT_USER);
+        localStorage.removeItem("samvidhaan_last_uid");
         setDataLoaded(true);
-        setLoading(false);
+        setLoading(false); // Auth is determined (none)
         if (dbUnsubscribe) dbUnsubscribe();
         return;
       }
 
-      // Try to load scoped cache for this specific user immediately
+      // Record this UID to help with next boot's cache lookup
+      localStorage.setItem("samvidhaan_last_uid", firebaseUser.uid);
+
+      // Check for scoped cache for this specific user
       const cacheKey = `samvidhaan_cache_${firebaseUser.uid}`;
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         try {
           setUser(JSON.parse(cached));
-          setLoading(false); // Stop spinner if we have their specific data
         } catch (e) {}
+      }
+
+      // After the first auth check, we can allow the app to render the protected routes
+      if (isFirstAuth) {
+        setLoading(false);
+        isFirstAuth = false;
       }
 
       // Set up realtime listener for this specific user
