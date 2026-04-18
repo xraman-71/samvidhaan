@@ -101,12 +101,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFbUser(firebaseUser);
+      
+      // Immediately clear global loading state once auth is determined
+      // This allows pages to render their layout while data fetches in background
+      setLoading(false);
+
       if (firebaseUser) {
         try {
           const userRef = ref(db, `users/${firebaseUser.uid}`);
           const userSnapshot = await get(userRef);
           if (userSnapshot.exists()) {
-            // Decode compressed data from RTDB into full UI format
             const decoded = decodeUser(userSnapshot.val() as CompressedUser);
             setUser(decoded);
           } else {
@@ -129,28 +133,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               activity: [],
               saved: [],
             };
-            // Encode and store compressed
             await set(userRef, encodeUser(newUser));
             setUser(newUser);
           }
         } catch (error) {
-          console.error("Database error (possibly offline):", error);
-          const initials = (firebaseUser.displayName || "S")
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
-          setUser({
-            ...DEFAULT_USER,
-            name: firebaseUser.displayName || "Scholar",
-            email: firebaseUser.email || "",
-            avatar: initials,
-          });
+          console.error("Database error:", error);
         }
       } else {
         setUser(DEFAULT_USER);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();

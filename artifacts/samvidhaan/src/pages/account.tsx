@@ -15,7 +15,7 @@ const PAGE_CONTAINER = "mx-auto w-full max-w-7xl";
 
 const container: Variants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.05 } },
+  show: { opacity: 1, transition: { staggerChildren: 0.03 } },
 };
 
 const item: Variants = {
@@ -31,8 +31,8 @@ export default function Account() {
   const { user, fbUser, loading, signInWithGoogle } = useUserData();
   const { t } = useTranslation();
 
-  const displayActivity = user?.activity || [];
-  const displayBookmarks = user?.saved || [];
+  const displayActivity = (user?.activity || []).slice(0, 6);
+  const displayBookmarks = (user?.saved || []).slice(0, 6);
 
   if (loading) {
     return (
