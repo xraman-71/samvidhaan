@@ -120,7 +120,7 @@ export default function Framers() {
           >
             <div className="px-4 md:px-6 py-4 border-b border-border bg-muted/40">
               <p className="text-sm text-muted-foreground">
-                Framers directory (deduplicated merged list): {framers.length} entries
+                Framers directory (299 entries)
               </p>
             </div>
 

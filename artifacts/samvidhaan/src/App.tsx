@@ -14,6 +14,8 @@ import Privacy from "@/pages/privacy";
 import Contact from "@/pages/contact";
 import Making from "@/pages/making";
 import Framers from "@/pages/framers";
+import Account from "@/pages/account";
+import SettingsPage from "@/pages/settings";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ function Router() {
         <Route path="/making" component={Making} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/contact" component={Contact} />
+        <Route path="/account" component={Account} />
+        <Route path="/settings" component={SettingsPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
