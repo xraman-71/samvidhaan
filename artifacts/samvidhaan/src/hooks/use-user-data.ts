@@ -47,26 +47,37 @@ export function useUserData() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setFbUser(user);
       if (user) {
-        // Fetch additional data from Firestore
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          setUser(userDoc.data());
-        } else {
-          // Initialize new user in Firestore
-          const newUser = {
+        try {
+          // Fetch additional data from Firestore
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUser(userDoc.data());
+          } else {
+            // Initialize new user in Firestore
+            const newUser = {
+              name: user.displayName || "Scholar",
+              email: user.email || "",
+              joined: new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
+              avatar: (user.displayName || "S").split(" ").map(n => n[0]).join("").toUpperCase(),
+              level: "Aspirant",
+              location: "India",
+              articlesRead: 0,
+              quizScore: 0,
+              streak: 1,
+              bookmarks: 0,
+            };
+            await setDoc(doc(db, "users", user.uid), newUser);
+            setUser(newUser);
+          }
+        } catch (error) {
+          console.error("Firestore error (possibly offline):", error);
+          // Fallback to basic user info if offline
+          setUser({
+            ...DEFAULT_USER,
             name: user.displayName || "Scholar",
             email: user.email || "",
-            joined: new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
             avatar: (user.displayName || "S").split(" ").map(n => n[0]).join("").toUpperCase(),
-            level: "Aspirant",
-            location: "India",
-            articlesRead: 0,
-            quizScore: 0,
-            streak: 1,
-            bookmarks: 0,
-          };
-          await setDoc(doc(db, "users", user.uid), newUser);
-          setUser(newUser);
+          });
         }
       } else {
         setUser(DEFAULT_USER);
