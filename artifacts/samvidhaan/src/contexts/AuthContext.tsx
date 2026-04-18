@@ -118,9 +118,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 1. Auth & Realtime Sync
+  // 2. Auth & Realtime Sync
   useEffect(() => {
     let dbUnsubscribe: (() => void) | null = null;
+    let isInitialized = false;
 
     const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setFbUser(firebaseUser);
@@ -128,31 +129,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!firebaseUser) {
         setUser(DEFAULT_USER);
         setDataLoaded(true);
-        setLoading(false); // Auth is determined (None)
+        setLoading(false);
         if (dbUnsubscribe) dbUnsubscribe();
         return;
       }
 
-      // AUTH IS DETERMINED
+      // Stop global spinner
       setLoading(false); 
 
-      // FAIL-SAFE: If Firebase takes too long (> 3s), stop showing the loading pulse
+      // FAIL-SAFE: If Firebase takes too long (> 2s), show whatever we have
       const fallbackTimer = setTimeout(() => {
-        if (!dataLoaded) {
-          console.warn("Firebase sync taking too long, falling back to defaults...");
-          setDataLoaded(true);
-        }
-      }, 3000);
+        setDataLoaded(true);
+      }, 2000);
 
-      // Set up realtime listener for data sync (Pure Firebase, no LocalStorage)
+      // Set up realtime listener for data sync
       const userRef = ref(db, `users/${firebaseUser.uid}`);
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
         clearTimeout(fallbackTimer);
         if (snapshot.exists()) {
-          const decoded = decodeUser(snapshot.val());
-          setUser(decoded);
-        } else {
-          // Initialize New User directly in Firebase
+          setUser(decodeUser(snapshot.val()));
+        } else if (!isInitialized) {
+          // Initialize New User only once
+          isInitialized = true;
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -182,7 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authUnsubscribe();
       if (dbUnsubscribe) dbUnsubscribe();
     };
-  }, [dataLoaded]); // Added dependency to allow fail-safe to update state correctly
+  }, []); // Removed dataLoaded to stop infinite loop
 
   // Apply settings side effects
   useEffect(() => {
