@@ -106,7 +106,7 @@ export function Footer() {
               {/* Social/External Links */}
               <div className="flex items-center gap-3 pt-1">
                 <a
-                  href="https://github.com"
+                  href="https://github.com/xraman-71/samvidhaan"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit our GitHub repository"
@@ -116,8 +116,8 @@ export function Footer() {
                   <Github className="h-4 w-4" />
                 </a>
                 <a
-                  href="mailto:contact@samvidhaan.in"
-                  aria-label="Email us at contact@samvidhaan.in"
+                  href="https://mail.google.com/mail/u/7/#inbox?compose=CllgCHrjnPnhHlkgsxGNWsfxzLVvQmjPGfHdnbHbqtJwJwSjVnZkfsxMRMRqHNgTHMGNRQCNNHL"
+                  aria-label="Email us at [xrbrowserextension@gmail.com]"
                   title="Contact Email"
                   className="w-10 h-10 rounded-xl bg-muted border border-border hover:bg-primary hover:border-primary hover:text-primary-foreground text-muted-foreground transition-all duration-300 flex items-center justify-center"
                 >
