@@ -64,13 +64,13 @@ export default function LoginPage() {
           className="bg-white dark:bg-black/40 border border-border/60 rounded-[32px] p-8 shadow-2xl shadow-black/5 backdrop-blur-xl relative overflow-hidden"
         >
           {/* Subtle inner glow */}
-          <div className="absolute inset-0 bg-linear-to-b from-primary/[0.02] to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-b from-primary/2 to-transparent pointer-events-none" />
 
           <div className="space-y-8 relative">
             <div className="space-y-2">
               <h2 className="text-xl font-bold text-foreground">Scholar Authentication</h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Connect your identity to track progress, save your favorite articles, and compete on the national leaderboard.
+                Connect your identity to access the full range of Samvidhaan+ features and track your constitutional journey.
               </p>
             </div>
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
 
             <div className="flex items-center gap-3 py-2">
               <div className="h-px grow bg-border/40" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Protected by Cloud-Sync</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">One-Tap Authentication</span>
               <div className="h-px grow bg-border/40" />
             </div>
 
@@ -101,8 +101,8 @@ export default function LoginPage() {
                   <Shield className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-foreground mb-0.5">Secure Storage</p>
-                  <p className="text-[10px] text-muted-foreground leading-tight">Your data is encrypted and stored in the Singapore (asia-southeast1) region for maximum speed and security.</p>
+                  <p className="text-[11px] font-bold text-foreground mb-0.5">Secure Authentication</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight">Industry-standard encryption powered by Google to keep your account safe and accessible.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -110,8 +110,8 @@ export default function LoginPage() {
                   <Sparkles className="h-4 w-4 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-foreground mb-0.5">Real-time Handshake</p>
-                  <p className="text-[10px] text-muted-foreground leading-tight">Synchronize your scores and streaks across all your devices instantly using our cloud engine.</p>
+                  <p className="text-[11px] font-bold text-foreground mb-0.5">Instant Access</p>
+                  <p className="text-[10px] text-muted-foreground leading-tight">Zero-configuration setup. Just one click to enter the digital sanctuary of the Indian Constitution.</p>
                 </div>
               </div>
             </div>
