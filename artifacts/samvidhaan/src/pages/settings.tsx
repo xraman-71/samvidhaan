@@ -150,11 +150,7 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/account">
-              <Button variant="outline" className="h-12 px-6 rounded-2xl border-border/60 hover:bg-muted font-bold text-sm gap-2">
-                <ArrowLeft className="h-4 w-4" /> Return to Account
-              </Button>
-            </Link>
+            {/* Action buttons could go here */}
           </div>
         </div>
 

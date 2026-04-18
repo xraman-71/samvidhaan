@@ -94,7 +94,7 @@ export function Header() {
           {/* Desktop Account CTA */}
           <div className="hidden md:flex items-center">
             {fbUser ? (
-              <Link href="/account">
+              <Link href="/settings">
                 <Button
                   size="sm"
                   variant="ghost"
@@ -208,10 +208,10 @@ export function Header() {
             {/* Mobile Account CTA */}
             <div className="mt-4 pt-4 border-t border-border pb-2">
               {fbUser ? (
-                <Link href="/account" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/settings" onClick={() => setMobileMenuOpen(false)}>
                   <Button className="w-full h-12 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base gap-2">
                     <User className="h-5 w-5" />
-                    My Account
+                    Settings
                   </Button>
                 </Link>
               ) : (

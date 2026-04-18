@@ -15,7 +15,6 @@ import Privacy from "@/pages/privacy";
 import Contact from "@/pages/contact";
 import Making from "@/pages/making";
 import Framers from "@/pages/framers";
-import Account from "@/pages/account";
 import SettingsPage from "@/pages/settings";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -56,7 +55,6 @@ function Router() {
         <Route path="/making" component={Making} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/contact" component={Contact} />
-        <ProtectedRoute path="/account" component={Account} />
         <ProtectedRoute path="/settings" component={SettingsPage} />
         <Route component={NotFound} />
       </Switch>
