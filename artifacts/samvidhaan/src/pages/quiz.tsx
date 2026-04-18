@@ -118,7 +118,46 @@ function QuizResult({
   onRestart: () => void;
   onBack: () => void;
 }) {
+  const { user, fbUser, updateProfile } = useUserData();
   const percentage = Math.round((score / total) * 100);
+  const hasSavedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!fbUser || hasSavedRef.current) return;
+    
+    const saveResult = async () => {
+      hasSavedRef.current = true;
+      
+      const newActivity = {
+        icon: "Gavel",
+        text: `Completed ${category.title} Quiz`,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        color: "text-secondary",
+        bg: "bg-secondary/5",
+        link: "/quiz"
+      };
+
+      const currentActivity = user?.activity || [];
+      const newActivityList = [newActivity, ...currentActivity].slice(0, 15);
+      
+      // Calculate new average score
+      const currentScore = user?.quizScore || 0;
+      const newAverage = currentScore === 0 ? percentage : Math.round((currentScore + percentage) / 2);
+
+      try {
+        await updateProfile({
+          quizScore: newAverage,
+          activity: newActivityList,
+          streak: (user?.streak || 0) + 1
+        });
+      } catch (err) {
+        console.error("Failed to save quiz results:", err);
+      }
+    };
+
+    saveResult();
+  }, [fbUser]);
+
   let performance = { label: "", sub: "", icon: Award, color: "text-amber-500", bg: "bg-amber-50" };
   
   if (percentage === 100) { 
