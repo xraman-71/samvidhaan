@@ -118,75 +118,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 2. Auth & Realtime Sync
+  // 2. Auth State Listener
   useEffect(() => {
-    let dbUnsubscribe: (() => void) | null = null;
-    let activeUid: string | null = null;
-
-    const authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setFbUser(firebaseUser);
-      
+      setLoading(false);
       if (!firebaseUser) {
-        activeUid = null;
         setUser(DEFAULT_USER);
         setDataLoaded(true);
-        setLoading(false);
-        if (dbUnsubscribe) dbUnsubscribe();
-        return;
       }
+    });
+    return () => authUnsubscribe();
+  }, []);
 
-      // If we are already syncing this user, don't restart
-      if (activeUid === firebaseUser.uid) return;
-      activeUid = firebaseUser.uid;
+  // 3. Data Sync Listener (Pure Firebase)
+  useEffect(() => {
+    if (!fbUser) return;
 
-      console.log("Samvidhaan Sync: Initializing for UID", firebaseUser.uid);
-      setLoading(false); 
-
-      // Set up realtime listener for data sync
-      const userRef = ref(db, `users/${firebaseUser.uid}`);
-      
-      const onValueUnsubscribe = onValue(userRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          setUser(decodeUser(data));
-          setDataLoaded(true);
-        } else {
-          // User doesn't exist in DB yet - Create them
-          console.log("Samvidhaan Sync: Creating new user node in Firebase...");
-          const initials = (firebaseUser.displayName || "Scholar")
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
-          const newUser: UserData = {
-            ...DEFAULT_USER,
-            name: firebaseUser.displayName || "Scholar",
-            email: firebaseUser.email || "",
-            joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
-            avatar: initials,
-          };
-          // Proactive initialization
-          set(userRef, encodeUser(newUser)).then(() => {
-            console.log("Samvidhaan Sync: User created successfully!");
-          }).catch(err => {
-            console.error("Samvidhaan Sync: Permission denied or connection error", err);
-          });
-          setUser(newUser);
-          setDataLoaded(true);
-        }
-      }, (error) => {
-        console.error("Samvidhaan Sync: Realtime listener error", error);
+    console.log("Samvidhaan Cloud: Connecting to database for", fbUser.email);
+    const userRef = ref(db, `users/${fbUser.uid}`);
+    
+    const onValueUnsubscribe = onValue(userRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log("Samvidhaan Cloud: Data received from Firebase.");
+        setUser(decodeUser(snapshot.val()));
         setDataLoaded(true);
-      });
+      } else {
+        console.log("Samvidhaan Cloud: New scholar detected. Initializing cloud profile...");
+        const initials = (fbUser.displayName || "Scholar")
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase();
+        
+        const newUser: UserData = {
+          ...DEFAULT_USER,
+          name: fbUser.displayName || "Scholar",
+          email: fbUser.email || "",
+          joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
+          avatar: initials,
+        };
 
-      dbUnsubscribe = onValueUnsubscribe;
+        // Forced initialization to ensure it appears in Console
+        set(userRef, encodeUser(newUser))
+          .then(() => console.log("Samvidhaan Cloud: Profile successfully added to Firebase!"))
+          .catch(err => console.error("Samvidhaan Cloud: Error adding profile:", err));
+        
+        setUser(newUser);
+        setDataLoaded(true);
+      }
+    }, (error) => {
+      console.error("Samvidhaan Cloud: Connection error:", error);
+      setDataLoaded(true);
     });
 
-    return () => {
-      authUnsubscribe();
-      if (dbUnsubscribe) dbUnsubscribe();
-    };
-  }, []); // Removed dataLoaded to stop infinite loop
+    return () => onValueUnsubscribe();
+  }, [fbUser]); // Removed dataLoaded to stop infinite loop
 
   // Apply settings side effects
   useEffect(() => {
