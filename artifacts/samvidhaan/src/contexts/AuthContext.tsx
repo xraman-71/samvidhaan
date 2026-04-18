@@ -9,6 +9,23 @@ import {
 import { ref, get, set, update } from "firebase/database";
 import i18n from "@/lib/i18n";
 
+// ── Compressed DB Schema ──────────────────────────────────
+// Keys are shortened for minimal RTDB storage usage.
+// n=name, e=email, j=joined, a=avatar, l=level, loc=location
+// ar=articlesRead, qs=quizScore, s=streak, b=bookmarks
+// act=activity[], sv=saved[]
+// Activity item: i=icon, t=text, tm=time, c=color, bg=bg, lk=link
+// Saved item: id=id, tt=title, p=part, ic=icon
+
+interface CompressedActivity { i: string; t: string; tm: string; c: string; bg: string; lk: string; }
+interface CompressedSaved { id: string; tt: string; p: string; ic: string; }
+interface CompressedUser {
+  n: string; e: string; j: string; a: string; l: string; loc: string;
+  ar: number; qs: number; s: number; b: number;
+  act?: CompressedActivity[]; sv?: CompressedSaved[];
+}
+
+// ── Full (UI-friendly) User Data ──────────────────────────
 const DEFAULT_USER = {
   name: "Guest Scholar",
   email: "",
@@ -36,6 +53,27 @@ const INITIAL_SETTINGS = {
 type UserData = typeof DEFAULT_USER;
 type Settings = typeof INITIAL_SETTINGS;
 
+// ── Encode / Decode helpers ───────────────────────────────
+function encodeUser(u: UserData): CompressedUser {
+  return {
+    n: u.name, e: u.email, j: u.joined, a: u.avatar, l: u.level, loc: u.location,
+    ar: u.articlesRead, qs: u.quizScore, s: u.streak, b: u.bookmarks,
+    act: (u.activity || []).map(a => ({ i: a.icon, t: a.text, tm: a.time, c: a.color, bg: a.bg, lk: a.link })),
+    sv: (u.saved || []).map(s => ({ id: s.id, tt: s.title, p: s.part, ic: s.icon })),
+  };
+}
+
+function decodeUser(c: CompressedUser): UserData {
+  return {
+    name: c.n || "", email: c.e || "", joined: c.j || "", avatar: c.a || "GS",
+    level: c.l || "Beginner", location: c.loc || "India",
+    articlesRead: c.ar || 0, quizScore: c.qs || 0, streak: c.s || 0, bookmarks: c.b || 0,
+    activity: (c.act || []).map(a => ({ icon: a.i, text: a.t, time: a.tm, color: a.c, bg: a.bg, link: a.lk })),
+    saved: (c.sv || []).map(s => ({ id: s.id, title: s.tt, part: s.p, icon: s.ic })),
+  };
+}
+
+// ── Context ───────────────────────────────────────────────
 interface AuthContextValue {
   user: UserData;
   fbUser: FirebaseUser | null;
@@ -68,7 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const userRef = ref(db, `users/${firebaseUser.uid}`);
           const userSnapshot = await get(userRef);
           if (userSnapshot.exists()) {
-            setUser(userSnapshot.val() as UserData);
+            // Decode compressed data from RTDB into full UI format
+            const decoded = decodeUser(userSnapshot.val() as CompressedUser);
+            setUser(decoded);
           } else {
             const initials = (firebaseUser.displayName || "Scholar")
               .split(" ")
@@ -89,7 +129,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               activity: [],
               saved: [],
             };
-            await set(userRef, newUser);
+            // Encode and store compressed
+            await set(userRef, encodeUser(newUser));
             setUser(newUser);
           }
         } catch (error) {
@@ -151,7 +192,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const updated = { ...user, ...data };
       setUser(updated);
       try {
-        await update(ref(db, `users/${fbUser.uid}`), data);
+        // Re-encode the full updated user and save compressed
+        await set(ref(db, `users/${fbUser.uid}`), encodeUser(updated));
       } catch (error) {
         console.error("Error updating profile:", error);
       }
