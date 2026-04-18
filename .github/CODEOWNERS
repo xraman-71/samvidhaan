@@ -1,0 +1,20 @@
+# Samvidhaan+ Code Ownership & Security Policy
+# This file ensures that critical UI components and core application logic 
+# cannot be modified without explicit approval from the project owner.
+
+# Global owners for the entire repository
+*       @xraman-71
+
+# Critical Layout & Branding Components
+/artifacts/samvidhaan/src/components/layout/Header.tsx    @xraman-71
+/artifacts/samvidhaan/src/components/layout/Footer.tsx    @xraman-71
+/artifacts/samvidhaan/src/components/layout/AshokaChakra.tsx @xraman-71
+
+# Core Translation & Logic
+/artifacts/samvidhaan/src/lib/translations.ts @xraman-71
+/artifacts/samvidhaan/src/lib/i18n.ts @xraman-71
+
+# Configuration & Security
+/.github/CODEOWNERS @xraman-71
+/artifacts/samvidhaan/package.json @xraman-71
+/artifacts/samvidhaan/vite.config.ts @xraman-71
