@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ref, get, set, update } from "firebase/database";
 import i18n from "@/lib/i18n";
 
 const DEFAULT_USER = {
@@ -65,9 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setFbUser(firebaseUser);
       if (firebaseUser) {
         try {
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-          if (userDoc.exists()) {
-            setUser(userDoc.data() as UserData);
+          const userRef = ref(db, `users/${firebaseUser.uid}`);
+          const userSnapshot = await get(userRef);
+          if (userSnapshot.exists()) {
+            setUser(userSnapshot.val() as UserData);
           } else {
             const initials = (firebaseUser.displayName || "Scholar")
               .split(" ")
@@ -88,11 +89,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               activity: [],
               saved: [],
             };
-            await setDoc(doc(db, "users", firebaseUser.uid), newUser);
+            await set(userRef, newUser);
             setUser(newUser);
           }
         } catch (error) {
-          console.error("Firestore error (possibly offline):", error);
+          console.error("Database error (possibly offline):", error);
           const initials = (firebaseUser.displayName || "S")
             .split(" ")
             .map((n) => n[0])
@@ -150,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const updated = { ...user, ...data };
       setUser(updated);
       try {
-        await setDoc(doc(db, "users", fbUser.uid), updated, { merge: true });
+        await update(ref(db, `users/${fbUser.uid}`), data);
       } catch (error) {
         console.error("Error updating profile:", error);
       }
