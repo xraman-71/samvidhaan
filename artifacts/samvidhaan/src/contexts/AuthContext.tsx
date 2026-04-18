@@ -63,13 +63,33 @@ function encodeUser(u: UserData): CompressedUser {
   };
 }
 
-function decodeUser(c: CompressedUser): UserData {
+function decodeUser(c: any): UserData {
+  // Migration Layer: Support both compressed (new) and uncompressed (legacy) keys
   return {
-    name: c.n || "", email: c.e || "", joined: c.j || "", avatar: c.a || "GS",
-    level: c.l || "Beginner", location: c.loc || "India",
-    articlesRead: c.ar || 0, quizScore: c.qs || 0, streak: c.s || 0, bookmarks: c.b || 0,
-    activity: (c.act || []).map(a => ({ icon: a.i, text: a.t, time: a.tm, color: a.c, bg: a.bg, link: a.lk })),
-    saved: (c.sv || []).map(s => ({ id: s.id, title: s.tt, part: s.p, icon: s.ic })),
+    name: c.n || c.name || "",
+    email: c.e || c.email || "",
+    joined: c.j || c.joined || "",
+    avatar: c.a || c.avatar || "GS",
+    level: c.l || c.level || "Beginner",
+    location: c.loc || c.location || "India",
+    articlesRead: c.ar ?? c.articlesRead ?? 0,
+    quizScore: c.qs ?? c.quizScore ?? 0,
+    streak: c.s ?? c.streak ?? 0,
+    bookmarks: c.b ?? c.bookmarks ?? 0,
+    activity: (c.act || c.activity || []).map((a: any) => ({
+      icon: a.i || a.icon || "BookOpen",
+      text: a.t || a.text || "",
+      time: a.tm || a.time || "",
+      color: a.c || a.color || "text-primary",
+      bg: a.bg || a.bg || "bg-primary/5",
+      link: a.lk || a.link || "#"
+    })),
+    saved: (c.sv || c.saved || []).map((s: any) => ({
+      id: s.id || s.id || "",
+      title: s.tt || s.title || "",
+      part: s.p || s.part || "",
+      icon: s.ic || s.icon || "BookMarked"
+    })),
   };
 }
 
