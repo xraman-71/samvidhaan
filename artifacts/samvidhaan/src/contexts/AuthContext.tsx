@@ -121,12 +121,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 2. Auth & Realtime Sync
   useEffect(() => {
     let dbUnsubscribe: (() => void) | null = null;
-    let isInitialized = false;
+    let activeUid: string | null = null;
 
-    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const authUnsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFbUser(firebaseUser);
       
       if (!firebaseUser) {
+        activeUid = null;
         setUser(DEFAULT_USER);
         setDataLoaded(true);
         setLoading(false);
@@ -134,23 +135,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Stop global spinner
-      setLoading(false); 
+      // If we are already syncing this user, don't restart
+      if (activeUid === firebaseUser.uid) return;
+      activeUid = firebaseUser.uid;
 
-      // FAIL-SAFE: If Firebase takes too long (> 2s), show whatever we have
-      const fallbackTimer = setTimeout(() => {
-        setDataLoaded(true);
-      }, 2000);
+      console.log("Samvidhaan Sync: Initializing for UID", firebaseUser.uid);
+      setLoading(false); 
 
       // Set up realtime listener for data sync
       const userRef = ref(db, `users/${firebaseUser.uid}`);
+      
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
-        clearTimeout(fallbackTimer);
         if (snapshot.exists()) {
-          setUser(decodeUser(snapshot.val()));
-        } else if (!isInitialized) {
-          // Initialize New User only once
-          isInitialized = true;
+          const data = snapshot.val();
+          setUser(decodeUser(data));
+          setDataLoaded(true);
+        } else {
+          // User doesn't exist in DB yet - Create them
+          console.log("Samvidhaan Sync: Creating new user node in Firebase...");
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -163,13 +165,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
             avatar: initials,
           };
-          set(userRef, encodeUser(newUser));
+          // Proactive initialization
+          set(userRef, encodeUser(newUser)).then(() => {
+            console.log("Samvidhaan Sync: User created successfully!");
+          }).catch(err => {
+            console.error("Samvidhaan Sync: Permission denied or connection error", err);
+          });
           setUser(newUser);
+          setDataLoaded(true);
         }
-        setDataLoaded(true);
       }, (error) => {
-        console.error("Firebase Sync error:", error);
-        clearTimeout(fallbackTimer);
+        console.error("Samvidhaan Sync: Realtime listener error", error);
         setDataLoaded(true);
       });
 
