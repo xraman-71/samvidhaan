@@ -135,62 +135,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!fbUser) return;
 
-    console.log("Samvidhaan Cloud: Connecting to database for", fbUser.email);
-    const userRef = ref(db, `users/${fbUser.uid}`);
-    
-    // Explicit Handshake Check
-    const connectedRef = ref(db, ".info/connected");
-    onValue(connectedRef, (snap) => {
-      if (snap.val() === true) {
-        console.log("Samvidhaan Cloud: Connection STATUS: ONLINE");
-      } else {
-        console.warn("Samvidhaan Cloud: Connection STATUS: OFFLINE (Check your Internet or Database URL)");
+    const syncUser = async () => {
+      console.log("Samvidhaan Cloud: Connecting to database for", fbUser.email);
+      const userRef = ref(db, `users/${fbUser.uid}`);
+      
+      try {
+        // Direct check for existence (More stable for creation)
+        const snapshot = await get(userRef);
+        
+        if (!snapshot.exists()) {
+          console.log("Samvidhaan Cloud: New scholar detected. Initializing cloud profile...");
+          const initials = (fbUser.displayName || "Scholar")
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
+          
+          const newUser: UserData = {
+            ...DEFAULT_USER,
+            name: fbUser.displayName || "Scholar",
+            email: fbUser.email || "",
+            joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
+            avatar: initials,
+          };
+
+          // Direct set like the user snippet
+          await set(userRef, encodeUser(newUser));
+          console.log("Samvidhaan Cloud: Profile successfully added to Firebase!");
+          setUser(newUser);
+        } else {
+          setUser(decodeUser(snapshot.val()));
+          console.log("Samvidhaan Cloud: Existing profile loaded.");
+        }
+        
+        setDataLoaded(true);
+
+        // Start realtime listener for subsequent updates
+        const onValueUnsubscribe = onValue(userRef, (snap) => {
+          if (snap.exists()) {
+            setUser(decodeUser(snap.val()));
+          }
+        }, (error) => {
+          console.error("Samvidhaan Cloud: Sync error", error);
+        });
+
+        return onValueUnsubscribe;
+      } catch (error: any) {
+        console.error("Samvidhaan Cloud: Connection error:", error);
+        alert("DATABASE CONNECTION FAILED! \n\nReason: " + error.message);
+        setDataLoaded(true);
       }
+    };
+
+    let unsubscribe: (() => void) | undefined;
+    syncUser().then(unsub => {
+      unsubscribe = unsub;
     });
 
-    const onValueUnsubscribe = onValue(userRef, (snapshot) => {
-      if (snapshot.exists()) {
-        console.log("Samvidhaan Cloud: Data received from Firebase.");
-        setUser(decodeUser(snapshot.val()));
-        setDataLoaded(true);
-      } else {
-        console.log("Samvidhaan Cloud: New scholar detected. Initializing cloud profile...");
-        const initials = (fbUser.displayName || "Scholar")
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase();
-        
-        const newUser: UserData = {
-          ...DEFAULT_USER,
-          name: fbUser.displayName || "Scholar",
-          email: fbUser.email || "",
-          joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
-          avatar: initials,
-        };
-
-        // Forced initialization to ensure it appears in Console
-        set(userRef, encodeUser(newUser))
-          .then(() => {
-            console.log("Samvidhaan Cloud: Profile successfully added to Firebase!");
-            // alert("Success! Your profile is now in Firebase.");
-          })
-          .catch(err => {
-            console.error("Samvidhaan Cloud: Error adding profile:", err);
-            alert("FIREBASE ERROR: Cannot write to database. Check your Rules or Database URL! \n\n" + err.message);
-          });
-        
-        setUser(newUser);
-        setDataLoaded(true);
-      }
-    }, (error) => {
-      console.error("Samvidhaan Cloud: Connection error:", error);
-      alert("DATABASE CONNECTION FAILED! \n\nReason: " + error.message + "\n\nPlease check your .env VITE_FIREBASE_DATABASE_URL");
-      setDataLoaded(true);
-    });
-
-    return () => onValueUnsubscribe();
-  }, [fbUser]); // Removed dataLoaded to stop infinite loop
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [fbUser]);
 
   // Apply settings side effects
   useEffect(() => {
