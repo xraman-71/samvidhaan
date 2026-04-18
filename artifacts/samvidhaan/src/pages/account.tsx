@@ -27,26 +27,12 @@ const ICON_MAP: Record<string, any> = {
   BookOpen, Gavel, BookMarked, Shield, Scale, Landmark
 };
 
-const recentActivity = [
-  { icon: "BookOpen", text: "Read Article 21 — Right to Life & Personal Liberty", time: "2 hours ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-21" },
-  { icon: "Gavel", text: "Completed Quiz: Landmark Cases of India", time: "Yesterday", color: "text-secondary", bg: "bg-secondary/5", link: "/quiz" },
-  { icon: "BookMarked", text: "Bookmarked: Article 32 — Constitutional Remedies", time: "2 days ago", color: "text-accent", bg: "bg-accent/5", link: "/article/article-32" },
-  { icon: "BookOpen", text: "Read Article 14 — Right to Equality", time: "3 days ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-14" },
-];
-
-const bookmarksList = [
-  { id: "article-21", title: "Article 21 — Right to Life", part: "Part III", icon: "Shield" },
-  { id: "article-14", title: "Article 14 — Right to Equality", part: "Part III", icon: "Scale" },
-  { id: "article-44", title: "Article 44 — Uniform Civil Code", part: "Part IV", icon: "Landmark" },
-  { id: "article-51a", title: "Article 51A — Fundamental Duties", part: "Part IVA", icon: "BookMarked" },
-];
-
 export default function Account() {
   const { user, fbUser, loading, signInWithGoogle } = useUserData();
   const { t } = useTranslation();
 
-  const displayActivity = user?.activity?.length ? user.activity : recentActivity;
-  const displayBookmarks = user?.saved?.length ? user.saved : bookmarksList;
+  const displayActivity = user?.activity || [];
+  const displayBookmarks = user?.saved || [];
 
   if (loading) {
     return (
@@ -210,29 +196,42 @@ export default function Account() {
               </div>
 
               <div className="space-y-3">
-                {displayActivity.map((a, i) => {
-                  const Icon = typeof a.icon === 'string' ? (ICON_MAP[a.icon] || BookOpen) : a.icon;
-                  return (
-                    <Link key={i} href={a.link}>
-                      <motion.div variants={item} className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-5 flex items-center gap-5 hover:border-primary/40 hover:bg-muted/30 transition-all group cursor-pointer shadow-sm shadow-black/2">
-                        <div className={`w-11 h-11 rounded-xl ${a.bg} ${a.color} flex items-center justify-center shrink-0 shadow-inner`}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <div className="grow min-w-0">
-                          <p className="text-sm font-bold text-foreground leading-snug group-hover:text-primary transition-colors">{a.text}</p>
-                          <div className="flex items-center gap-3 mt-1.5">
-                            <span className="text-[10px] font-bold text-muted-foreground/60 flex items-center gap-1"><Clock className="h-3 w-3" /> {a.time}</span>
-                            <span className="w-1 h-1 rounded-full bg-border" />
-                            <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">Completed</span>
-                          </div>
-                        </div>
-                        <div className="w-8 h-8 rounded-lg border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
-                          <ChevronRight className="h-4 w-4" />
-                        </div>
-                      </motion.div>
+                {displayActivity.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/40 rounded-2xl bg-white dark:bg-black/20">
+                    <BookOpen className="h-10 w-10 text-muted-foreground/20 mb-4" />
+                    <p className="text-sm font-bold text-muted-foreground/60">No activity yet</p>
+                    <p className="text-xs text-muted-foreground/40 mt-1 max-w-xs">Start reading articles or taking quizzes — your history will appear here.</p>
+                    <Link href="/explore">
+                      <Button size="sm" className="mt-5 h-9 px-5 rounded-xl bg-primary text-primary-foreground text-[11px] font-black uppercase tracking-wider gap-2">
+                        <BookOpen className="h-3.5 w-3.5" /> Explore Articles
+                      </Button>
                     </Link>
-                  );
-                })}
+                  </div>
+                ) : (
+                  displayActivity.map((a, i) => {
+                    const Icon = typeof a.icon === 'string' ? (ICON_MAP[a.icon] || BookOpen) : a.icon;
+                    return (
+                      <Link key={i} href={a.link}>
+                        <motion.div variants={item} className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-5 flex items-center gap-5 hover:border-primary/40 hover:bg-muted/30 transition-all group cursor-pointer shadow-sm shadow-black/2">
+                          <div className={`w-11 h-11 rounded-xl ${a.bg} ${a.color} flex items-center justify-center shrink-0 shadow-inner`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div className="grow min-w-0">
+                            <p className="text-sm font-bold text-foreground leading-snug group-hover:text-primary transition-colors">{a.text}</p>
+                            <div className="flex items-center gap-3 mt-1.5">
+                              <span className="text-[10px] font-bold text-muted-foreground/60 flex items-center gap-1"><Clock className="h-3 w-3" /> {a.time}</span>
+                              <span className="w-1 h-1 rounded-full bg-border" />
+                              <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">Completed</span>
+                            </div>
+                          </div>
+                          <div className="w-8 h-8 rounded-lg border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
+                            <ChevronRight className="h-4 w-4" />
+                          </div>
+                        </motion.div>
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </motion.div>
 
@@ -251,31 +250,42 @@ export default function Account() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {displayBookmarks.map((b, i) => {
-                  const Icon = typeof b.icon === 'string' ? (ICON_MAP[b.icon] || BookMarked) : b.icon;
-                  return (
-                    <Link key={i} href={`/article/${b.id}`}>
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.98 }} 
-                        whileInView={{ opacity: 1, scale: 1 }} 
-                        viewport={{ once: true }} 
-                        transition={{ delay: i * 0.05 }}
-                        className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-6 hover:border-primary/40 transition-all group cursor-pointer relative overflow-hidden h-full"
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">{b.part}</span>
-                        </div>
-                        <h3 className="text-base font-bold text-foreground leading-tight group-hover:text-primary transition-colors mb-2">{b.title}</h3>
-                        <p className="text-[10px] font-medium text-muted-foreground leading-relaxed line-clamp-2">Fundamental framework defining the rights and guarantees of Indian citizens.</p>
-                        
-                        <div className="absolute top-0 right-0 w-16 h-16 bg-linear-to-bl from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </motion.div>
+                {displayBookmarks.length === 0 ? (
+                  <div className="col-span-2 flex flex-col items-center justify-center py-16 text-center border border-dashed border-border/40 rounded-2xl bg-white dark:bg-black/20">
+                    <BookMarked className="h-10 w-10 text-muted-foreground/20 mb-4" />
+                    <p className="text-sm font-bold text-muted-foreground/60">No saved articles yet</p>
+                    <p className="text-xs text-muted-foreground/40 mt-1 max-w-xs">Bookmark articles while reading to save them here for quick access.</p>
+                    <Link href="/explore">
+                      <Button size="sm" className="mt-5 h-9 px-5 rounded-xl bg-primary text-primary-foreground text-[11px] font-black uppercase tracking-wider gap-2">
+                        <BookMarked className="h-3.5 w-3.5" /> Browse Articles
+                      </Button>
                     </Link>
-                  );
-                })}
+                  </div>
+                ) : (
+                  displayBookmarks.map((b, i) => {
+                    const Icon = typeof b.icon === 'string' ? (ICON_MAP[b.icon] || BookMarked) : b.icon;
+                    return (
+                      <Link key={i} href={`/article/${b.id}`}>
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.98 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.05 }}
+                          className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-6 hover:border-primary/40 transition-all group cursor-pointer relative overflow-hidden h-full"
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">{b.part}</span>
+                          </div>
+                          <h3 className="text-base font-bold text-foreground leading-tight group-hover:text-primary transition-colors mb-2">{b.title}</h3>
+                          <div className="absolute top-0 right-0 w-16 h-16 bg-linear-to-bl from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </motion.div>
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </motion.div>
           </div>
@@ -306,10 +316,10 @@ export default function Account() {
 
               <div className="space-y-5">
                 {[
-                  { label: "Fundamental Rights", pct: 85, color: "bg-primary" },
-                  { label: "DPSP & Duties", pct: 60, color: "bg-secondary" },
-                  { label: "Judicial History", pct: 45, color: "bg-accent" },
-                  { label: "State Policy", pct: 30, color: "bg-amber-500" },
+                  { label: "Fundamental Rights", pct: Math.min(100, Math.round((user.articlesRead / 50) * 100)), color: "bg-primary" },
+                  { label: "Quiz Mastery", pct: user.quizScore, color: "bg-secondary" },
+                  { label: "Streak Progress", pct: Math.min(100, Math.round((user.streak / 30) * 100)), color: "bg-accent" },
+                  { label: "Saved Articles", pct: Math.min(100, Math.round((user.bookmarks / 20) * 100)), color: "bg-amber-500" },
                 ].map((p, i) => (
                   <div key={i}>
                     <div className="flex justify-between items-end mb-2">
@@ -317,12 +327,12 @@ export default function Account() {
                       <span className="text-[10px] font-black text-primary bg-primary/10 px-1.5 py-0.5 rounded-md">{p.pct}%</span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden border border-border/20">
-                      <motion.div 
-                        initial={{ width: 0 }} 
-                        whileInView={{ width: `${p.pct}%` }} 
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${p.pct}%` }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1.2, ease: "circOut", delay: i * 0.1 }} 
-                        className={`h-full ${p.color} rounded-full shadow-lg shadow-black/5`} 
+                        transition={{ duration: 1.2, ease: "circOut", delay: i * 0.1 }}
+                        className={`h-full ${p.color} rounded-full shadow-lg shadow-black/5`}
                       />
                     </div>
                   </div>
@@ -345,8 +355,9 @@ export default function Account() {
               
               <div className="space-y-3">
                 {[
-                  { title: "Article Architect", desc: "Read 50 unique articles", progress: 78, color: "from-blue-500/20 to-blue-600/20" },
-                  { title: "Quiz Grandmaster", desc: "Maintain 95% accuracy", progress: 92, color: "from-amber-500/20 to-amber-600/20" },
+                  { title: "Article Architect", desc: "Read 50 unique articles", progress: Math.min(100, Math.round((user.articlesRead / 50) * 100)), color: "from-blue-500/20 to-blue-600/20" },
+                  { title: "Quiz Grandmaster", desc: "Maintain 95% accuracy", progress: Math.min(100, user.quizScore), color: "from-amber-500/20 to-amber-600/20" },
+                  { title: "Streak Champion", desc: "30 day reading streak", progress: Math.min(100, Math.round((user.streak / 30) * 100)), color: "from-green-500/20 to-green-600/20" },
                 ].map((goal, i) => (
                   <div key={i} className={`bg-linear-to-br ${goal.color} border border-white/10 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden`}>
                     <div className="flex justify-between items-start mb-3 relative z-10">
@@ -357,11 +368,11 @@ export default function Account() {
                       <span className="text-[10px] font-black text-foreground">{goal.progress}%</span>
                     </div>
                     <div className="h-1.5 bg-background/40 rounded-full overflow-hidden relative z-10">
-                      <motion.div 
-                        initial={{ width: 0 }} 
-                        whileInView={{ width: `${goal.progress}%` }} 
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${goal.progress}%` }}
                         viewport={{ once: true }}
-                        className="h-full bg-foreground/80 rounded-full" 
+                        className="h-full bg-foreground/80 rounded-full"
                       />
                     </div>
                   </div>
