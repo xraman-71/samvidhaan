@@ -136,9 +136,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // AUTH IS DETERMINED
       setLoading(false); 
 
+      // FAIL-SAFE: If Firebase takes too long (> 3s), stop showing the loading pulse
+      const fallbackTimer = setTimeout(() => {
+        if (!dataLoaded) {
+          console.warn("Firebase sync taking too long, falling back to defaults...");
+          setDataLoaded(true);
+        }
+      }, 3000);
+
       // Set up realtime listener for data sync (Pure Firebase, no LocalStorage)
       const userRef = ref(db, `users/${firebaseUser.uid}`);
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
+        clearTimeout(fallbackTimer);
         if (snapshot.exists()) {
           const decoded = decodeUser(snapshot.val());
           setUser(decoded);
@@ -162,6 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setDataLoaded(true);
       }, (error) => {
         console.error("Firebase Sync error:", error);
+        clearTimeout(fallbackTimer);
         setDataLoaded(true);
       });
 
@@ -172,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authUnsubscribe();
       if (dbUnsubscribe) dbUnsubscribe();
     };
-  }, []);
+  }, [dataLoaded]); // Added dependency to allow fail-safe to update state correctly
 
   // Apply settings side effects
   useEffect(() => {
