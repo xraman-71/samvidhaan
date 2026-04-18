@@ -98,13 +98,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // Single global auth listener
+  // 1. Initial Load: Try to get data from LocalStorage immediately for "Instant-On" feel
+  useEffect(() => {
+    const cached = localStorage.getItem("samvidhaan_user_cache");
+    if (cached) {
+      try {
+        setUser(JSON.parse(cached));
+        setLoading(false); // If we have cache, we can stop showing global loader early
+      } catch (e) {
+        console.error("Cache read error", e);
+      }
+    }
+  }, []);
+
+  // 2. Background Sync: Single global auth listener + Firebase sync
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFbUser(firebaseUser);
       
       if (!firebaseUser) {
         setUser(DEFAULT_USER);
+        localStorage.removeItem("samvidhaan_user_cache");
         setDataLoaded(true);
         setLoading(false);
         return;
@@ -117,6 +131,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (userSnapshot.exists()) {
           const decoded = decodeUser(userSnapshot.val() as CompressedUser);
           setUser(decoded);
+          // Update cache for next refresh
+          localStorage.setItem("samvidhaan_user_cache", JSON.stringify(decoded));
         } else {
           // Initialize new user
           const initials = (firebaseUser.displayName || "Scholar")
@@ -133,9 +149,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
           await set(userRef, encodeUser(newUser));
           setUser(newUser);
+          localStorage.setItem("samvidhaan_user_cache", JSON.stringify(newUser));
         }
       } catch (error) {
-        console.error("Database fetch error:", error);
+        console.error("Sync error:", error);
       } finally {
         setDataLoaded(true);
         setLoading(false);
@@ -170,6 +187,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
+      localStorage.removeItem("samvidhaan_user_cache");
       window.location.href = "/";
     } catch (error) {
       console.error("Sign-out error:", error);
@@ -178,10 +196,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (data: Partial<UserData>) => {
     if (fbUser && dataLoaded) {
-      // Functional update to ensure we use latest state
       setUser(prev => {
         const updated = { ...prev, ...data };
-        // Fire and forget the DB update to keep UI snappy
+        localStorage.setItem("samvidhaan_user_cache", JSON.stringify(updated));
         set(ref(db, `users/${fbUser.uid}`), encodeUser(updated))
           .catch(err => console.error("Sync error:", err));
         return updated;
