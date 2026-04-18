@@ -8,11 +8,13 @@ import { fundamentalRights } from "@/data/fundamentalRights";
 import { allArticles } from "@/data/allArticles";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+import { useUserData } from "@/hooks/use-user-data";
 import NotFound from "./not-found";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/article/:id");
   const { toast } = useToast();
+  const { user, fbUser, updateProfile } = useUserData();
   const id = params?.id;
 
   // Find if it's a fundamental right or an article
@@ -35,11 +37,50 @@ export default function ArticleDetail() {
     });
   };
 
-  const handleBookmark = () => {
-    toast({
-      title: "Saved to bookmarks",
-      description: "You can find this in your saved articles.",
-    });
+  const handleBookmark = async () => {
+    if (!fbUser) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save articles.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const isAlreadySaved = user?.saved?.some(s => s.id === data.id);
+    
+    if (isAlreadySaved) {
+      toast({
+        title: "Already saved",
+        description: "This article is already in your bookmarks.",
+      });
+      return;
+    }
+
+    const newBookmark = {
+      id: data.id,
+      title: data.title,
+      part: isFundamentalRightType ? "Part III" : (data as typeof allArticles[0]).part || "Constitution",
+      icon: "BookMarked"
+    };
+
+    try {
+      await updateProfile({
+        saved: [...(user?.saved || []), newBookmark],
+        bookmarks: (user?.bookmarks || 0) + 1
+      });
+
+      toast({
+        title: "Saved to bookmarks",
+        description: "You can find this in your Account page.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save bookmark. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
