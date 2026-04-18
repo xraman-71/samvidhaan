@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useRoute, Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, BookOpen, Share2, Bookmark, CheckCircle2, ChevronRight } from "lucide-react";
@@ -16,12 +16,54 @@ export default function ArticleDetail() {
   const { toast } = useToast();
   const { user, fbUser, updateProfile } = useUserData();
   const id = params?.id;
+  const trackedRef = useRef<string | null>(null);
 
   // Find if it's a fundamental right or an article
   const isRight = fundamentalRights.find(r => r.id === id);
   const isArticle = allArticles.find(a => a.id === id);
 
   const data = isRight || isArticle;
+
+  useEffect(() => {
+    if (!fbUser || !data || trackedRef.current === data.id) return;
+
+    const trackActivity = async () => {
+      trackedRef.current = data.id;
+
+      const newActivity = {
+        icon: "BookOpen",
+        text: `Read ${data.title}`,
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        color: "text-primary",
+        bg: "bg-primary/5",
+        link: `/article/${data.id}`
+      };
+
+      const currentActivity = user?.activity || [];
+      // Remove duplicate entries of the same article to keep history clean
+      const filteredActivity = currentActivity.filter(a => a.link !== `/article/${data.id}`);
+      // Prepend the new activity and keep only the latest 15
+      const newActivityList = [newActivity, ...filteredActivity].slice(0, 15);
+      
+      const isNewArticle = !currentActivity.some(a => a.link === `/article/${data.id}`);
+
+      try {
+        await updateProfile({
+          activity: newActivityList,
+          ...(isNewArticle ? { articlesRead: (user?.articlesRead || 0) + 1 } : {})
+        });
+      } catch (error) {
+        console.error("Failed to track activity", error);
+      }
+    };
+
+    // Wait 2 seconds before tracking to ensure they are actually reading it
+    const timer = setTimeout(() => {
+      trackActivity();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [data, fbUser]); // We don't include user?.activity to avoid infinite loops during update
 
   if (!data) {
     return <NotFound />;
