@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   User, Sun, Moon, Smartphone, Camera, Globe, Check,
   LogOut, ArrowLeft, Shield, Star, HelpCircle, Trophy,
-  CreditCard, Zap, Receipt, ChevronRight, AlertTriangle, Bell, Lock, Eye, Settings
+  Zap, ChevronRight, AlertTriangle, Bell, Lock, Eye, Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AshokaChakra } from "@/components/layout/AshokaChakra";
@@ -134,7 +134,6 @@ export default function SettingsPage() {
     { label: "General", desc: "Identity & Core", icon: User },
     { label: "Preferences", desc: "Experience & UI", icon: Zap },
     { label: "Security", desc: "Access & Privacy", icon: Shield },
-    { label: "Billing", desc: "Subscription", icon: CreditCard, badge: "PRO" },
   ];
 
   return (
