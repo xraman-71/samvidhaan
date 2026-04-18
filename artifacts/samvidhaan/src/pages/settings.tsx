@@ -47,7 +47,7 @@ function Toggle({ isOn, onToggle, label }: { isOn: boolean; onToggle: () => void
       type="button"
       onClick={onToggle}
       className={`relative w-9 h-5 rounded-full transition-colors duration-300 focus:outline-none shrink-0 ${isOn ? "bg-primary" : "bg-muted-foreground/20"}`}
-      aria-checked={isOn ? "true" : "false"}
+      aria-checked={isOn}
       aria-label={label}
       title={label}
       role="switch"
@@ -128,7 +128,7 @@ export default function SettingsPage() {
     });
   };
 
-  const tabs = [
+  const tabs: Array<{ label: string; desc: string; icon: React.ElementType; badge?: string }> = [
     { label: "General", desc: "Identity & Core", icon: User },
     { label: "Preferences", desc: "Experience & UI", icon: Zap },
   ];
