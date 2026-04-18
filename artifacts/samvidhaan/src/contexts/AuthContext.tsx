@@ -90,57 +90,49 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserData>(DEFAULT_USER);
   const [fbUser, setFbUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const [settings, setSettings] = useState<Settings>(() => {
-    const saved = localStorage.getItem("samvidhaan_settings");
-    return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
-  });
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // Single global auth listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFbUser(firebaseUser);
       
-      // Immediately clear global loading state once auth is determined
-      // This allows pages to render their layout while data fetches in background
-      setLoading(false);
-
-      if (firebaseUser) {
-        try {
-          const userRef = ref(db, `users/${firebaseUser.uid}`);
-          const userSnapshot = await get(userRef);
-          if (userSnapshot.exists()) {
-            const decoded = decodeUser(userSnapshot.val() as CompressedUser);
-            setUser(decoded);
-          } else {
-            const initials = (firebaseUser.displayName || "Scholar")
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase();
-            const newUser: UserData = {
-              name: firebaseUser.displayName || "Scholar",
-              email: firebaseUser.email || "",
-              joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
-              avatar: initials,
-              level: "Aspirant",
-              location: "India",
-              articlesRead: 0,
-              quizScore: 0,
-              streak: 1,
-              bookmarks: 0,
-              activity: [],
-              saved: [],
-            };
-            await set(userRef, encodeUser(newUser));
-            setUser(newUser);
-          }
-        } catch (error) {
-          console.error("Database error:", error);
-        }
-      } else {
+      if (!firebaseUser) {
         setUser(DEFAULT_USER);
+        setDataLoaded(true);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userRef = ref(db, `users/${firebaseUser.uid}`);
+        const userSnapshot = await get(userRef);
+        
+        if (userSnapshot.exists()) {
+          const decoded = decodeUser(userSnapshot.val() as CompressedUser);
+          setUser(decoded);
+        } else {
+          // Initialize new user
+          const initials = (firebaseUser.displayName || "Scholar")
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
+          const newUser: UserData = {
+            ...DEFAULT_USER,
+            name: firebaseUser.displayName || "Scholar",
+            email: firebaseUser.email || "",
+            joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
+            avatar: initials,
+          };
+          await set(userRef, encodeUser(newUser));
+          setUser(newUser);
+        }
+      } catch (error) {
+        console.error("Database fetch error:", error);
+      } finally {
+        setDataLoaded(true);
+        setLoading(false);
       }
     });
 
@@ -179,15 +171,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateProfile = async (data: Partial<UserData>) => {
-    if (fbUser) {
-      const updated = { ...user, ...data };
-      setUser(updated);
-      try {
-        // Re-encode the full updated user and save compressed
-        await set(ref(db, `users/${fbUser.uid}`), encodeUser(updated));
-      } catch (error) {
-        console.error("Error updating profile:", error);
-      }
+    if (fbUser && dataLoaded) {
+      // Functional update to ensure we use latest state
+      setUser(prev => {
+        const updated = { ...prev, ...data };
+        // Fire and forget the DB update to keep UI snappy
+        set(ref(db, `users/${fbUser.uid}`), encodeUser(updated))
+          .catch(err => console.error("Sync error:", err));
+        return updated;
+      });
     }
   };
 
