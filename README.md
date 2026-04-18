@@ -1,83 +1,102 @@
-# 🇮🇳 Samvidhaan+
+# 🇮🇳 Samvidhaan+ | Digital India's Constitution Explorer
 ### *Know Your Rights. Own Your Future.*
 
-Samvidhaan+ is a premium, interactive digital platform designed to make the **Constitution of India** accessible, engaging, and understandable for every citizen. By blending modern UI aesthetics with powerful educational tools, Samvidhaan+ transforms the world's longest written constitution into a living, breathing guide for the digital age.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![i18n](https://img.shields.io/badge/i18n-22_Languages-orange?style=for-the-badge&logo=i18next)](https://react.i18next.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+
+**Samvidhaan+** is the definitive digital gateway to the **Constitution of India**. Built for students, legal professionals, and everyday citizens, it simplifies the world's most complex legal document into a high-performance, multilingual, and interactive experience.
 
 ---
 
-## ✨ Key Features
+## 🚀 Why Samvidhaan+?
 
-- **📖 Intelligent Explorer**: Effortlessly navigate through Articles, Schedules, and Amendments with an intuitive search and categorization system.
-- **🌍 Multilingual by Design**: Fully localized support for all **22 official constitutional languages** of India, ensuring inclusivity for all linguistic communities.
-- **🎓 Scholarly Insights**: Deep-dive into the history, debates, and intent behind the laws that shape our nation.
-- **🏆 Interactive Learning**: Test your knowledge with gamified quizzes and track your progress on your personalized scholar dashboard.
-- **🎨 Artistic Heritage**: Explore the illuminated masterpiece of the original handwritten constitution, celebrating the artistic contributions of Nandalal Bose and his team.
-- **⚖️ Landmark Judgments**: Understand how judicial history has defined the soul of Indian democracy through curated case studies.
+Understanding the laws of the land shouldn't require a law degree. Whether you are preparing for **UPSC**, **CLAT**, or simply exercising your **Fundamental Rights**, Samvidhaan+ provides a state-of-the-art interface to explore India's legal foundation.
 
-## 🛠️ Technology Stack
+### 🌐 SEO Optimized & Multilingual
+- **Complete Bare Act**: Full access to all **Articles**, **Schedules**, and **Amendments**.
+- **22 Official Languages**: Localized content for Hindi, Marathi, Tamil, Bengali, and all 22 Eighth Schedule languages.
+- **UPSC & Civil Services Ready**: Curated insights and historical context for competitive exams.
 
-- **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Vanilla CSS for custom components)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **i18n**: [react-i18next](https://react.i18next.com/)
-- **Routing**: [Wouter](https://github.com/molecula/wouter)
+---
 
-## 🚀 Getting Started
+## ✨ Premium Features
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [pnpm](https://pnpm.io/) (recommended)
+### 🔍 Intelligent Constitution Explorer
+A blazing-fast search engine that lets you find specific articles by number, keyword, or category. Perfect for quick legal references and **Bare Act** study sessions.
 
-### Installation
+### 🧠 Interactive Learning & Quizzes
+Master the Constitution through gamified learning modules. Test your knowledge of the Preamble, Fundamental Duties, and Directive Principles.
 
-1. **Clone the repository**:
+### 📊 Scholar Dashboard
+Track your constitutional literacy journey. Earn badges as you read through Parts I to XXII and master complex amendments like the **42nd Amendment** or **GST (101st)**.
+
+### 🖼️ Artistic & Historical Archive
+Explore the original 1950 constitution with high-fidelity digital scans of the artwork by **Nandalal Bose** and the calligraphy of **Prem Behari Narain Raizada**.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+- **Engine**: [React 18](https://reactjs.org/) with [Vite](https://vitejs.dev/) for sub-second hot reloads.
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with a custom **Glassmorphism** design system.
+- **Motion**: [Framer Motion](https://www.framer.com/motion/) for fluid, 60fps micro-animations.
+- **Internationalization**: [i18next](https://www.i18next.com/) framework managing 22+ language dictionaries.
+- **Performance**: Zero-dependency routing via [Wouter](https://github.com/molecula/wouter).
+
+---
+
+## 📖 Installation & Setup
+
+Boost your local development environment in minutes:
+
+1. **Clone & Enter**:
    ```bash
    git clone https://github.com/xraman-71/samvidhaan.git
-   cd samvidhaan
+   cd samvidhaan/artifacts/samvidhaan
    ```
 
-2. **Navigate to the application directory**:
-   ```bash
-   cd artifacts/samvidhaan
-   ```
-
-3. **Install dependencies**:
+2. **Install with pnpm**:
    ```bash
    pnpm install
    ```
 
-4. **Start the development server**:
+3. **Launch Dev Server**:
    ```bash
    pnpm dev
    ```
 
 ---
 
-## 🏗️ Project Structure
+## 🗺️ Project Navigation
 
-- `src/pages`: Core application interfaces (Home, Explore, Account, Quiz, etc.)
-- `src/lib/translations.ts`: Centralized multilingual database for all 22 languages.
-- `src/components/layout`: Global UI framework including the Ashoka Chakra and Header.
-- `src/hooks`: Custom React hooks for data management and UI state.
-
-## ♿ Accessibility & Standards
-
-Samvidhaan+ is built with accessibility as a core principle:
-- **ARIA Compliant**: Full support for screen readers via proper ARIA attributes and roles.
-- **Responsive**: Seamless experience across mobile, tablet, and desktop.
-- **Localized**: Breaking language barriers to ensure constitutional literacy for everyone.
+- `src/pages`: 🖥️ High-level viewports (Home, Explore, Account, Quiz).
+- `src/lib/translations.ts`: 🔤 The centralized multilingual engine (22 Languages).
+- `src/components/layout`: 🏗️ Global design tokens and structural components.
+- `src/data`: 📊 Curated JSON data for Articles and Framers.
 
 ---
 
-## 🤝 Contributing
+## ♿ Accessibility First
 
-We welcome contributions from developers, legal scholars, and educators! Feel free to open an issue or submit a pull request.
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
+We believe legal literacy is a human right.
+- **Fully ARIA Compliant**: Screen reader support for every interactive element.
+- **Optimized for India**: Lightweight bundle size for better performance on mobile networks across Tier 2 and Tier 3 cities.
+- **Visual Harmony**: Dark and Light modes designed to reduce eye strain during long study sessions.
 
 ---
 
-*“The Constitution is not a mere lawyers’ document, it is a vehicle of Life, and its spirit is always the spirit of Age.”* — **Dr. B.R. Ambedkar**
+## 🤝 Community & Support
+
+- **SEO Keywords**: Indian Constitution, Articles of Indian Constitution, UPSC Polity, Indian Law App, Digital Samvidhaan, Bare Act India, GST Amendment, Fundamental Rights India.
+- **Contributing**: We welcome PRs from legal tech enthusiasts and open-source contributors!
+- **Contact**: Reach out via GitHub Issues for feature requests.
+
+---
+
+*“Justice, Liberty, Equality, and Fraternity.”* — **The Preamble to the Constitution of India**
+
+---
+© 2026 Samvidhaan+ | Made with ❤️ for a Digital India.
