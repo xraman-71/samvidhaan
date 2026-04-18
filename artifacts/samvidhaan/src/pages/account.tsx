@@ -23,23 +23,30 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
+const ICON_MAP: Record<string, any> = {
+  BookOpen, Gavel, BookMarked, Shield, Scale, Landmark
+};
+
 const recentActivity = [
-  { icon: BookOpen, text: "Read Article 21 — Right to Life & Personal Liberty", time: "2 hours ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-21" },
-  { icon: Gavel, text: "Completed Quiz: Landmark Cases of India", time: "Yesterday", color: "text-secondary", bg: "bg-secondary/5", link: "/quiz" },
-  { icon: BookMarked, text: "Bookmarked: Article 32 — Constitutional Remedies", time: "2 days ago", color: "text-accent", bg: "bg-accent/5", link: "/article/article-32" },
-  { icon: BookOpen, text: "Read Article 14 — Right to Equality", time: "3 days ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-14" },
+  { icon: "BookOpen", text: "Read Article 21 — Right to Life & Personal Liberty", time: "2 hours ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-21" },
+  { icon: "Gavel", text: "Completed Quiz: Landmark Cases of India", time: "Yesterday", color: "text-secondary", bg: "bg-secondary/5", link: "/quiz" },
+  { icon: "BookMarked", text: "Bookmarked: Article 32 — Constitutional Remedies", time: "2 days ago", color: "text-accent", bg: "bg-accent/5", link: "/article/article-32" },
+  { icon: "BookOpen", text: "Read Article 14 — Right to Equality", time: "3 days ago", color: "text-primary", bg: "bg-primary/5", link: "/article/article-14" },
 ];
 
 const bookmarksList = [
-  { id: "article-21", title: "Article 21 — Right to Life", part: "Part III", icon: Shield },
-  { id: "article-14", title: "Article 14 — Right to Equality", part: "Part III", icon: Scale },
-  { id: "article-44", title: "Article 44 — Uniform Civil Code", part: "Part IV", icon: Landmark },
-  { id: "article-51a", title: "Article 51A — Fundamental Duties", part: "Part IVA", icon: BookMarked },
+  { id: "article-21", title: "Article 21 — Right to Life", part: "Part III", icon: "Shield" },
+  { id: "article-14", title: "Article 14 — Right to Equality", part: "Part III", icon: "Scale" },
+  { id: "article-44", title: "Article 44 — Uniform Civil Code", part: "Part IV", icon: "Landmark" },
+  { id: "article-51a", title: "Article 51A — Fundamental Duties", part: "Part IVA", icon: "BookMarked" },
 ];
 
 export default function Account() {
   const { user, fbUser, loading, signInWithGoogle } = useUserData();
   const { t } = useTranslation();
+
+  const displayActivity = user?.activity?.length ? user.activity : recentActivity;
+  const displayBookmarks = user?.saved?.length ? user.saved : bookmarksList;
 
   if (loading) {
     return (
@@ -203,26 +210,29 @@ export default function Account() {
               </div>
 
               <div className="space-y-3">
-                {recentActivity.map((a, i) => (
-                  <Link key={i} href={a.link}>
-                    <motion.div variants={item} className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-5 flex items-center gap-5 hover:border-primary/40 hover:bg-muted/30 transition-all group cursor-pointer shadow-sm shadow-black/2">
-                      <div className={`w-11 h-11 rounded-xl ${a.bg} ${a.color} flex items-center justify-center shrink-0 shadow-inner`}>
-                        <a.icon className="h-5 w-5" />
-                      </div>
-                      <div className="grow min-w-0">
-                        <p className="text-sm font-bold text-foreground leading-snug group-hover:text-primary transition-colors">{a.text}</p>
-                        <div className="flex items-center gap-3 mt-1.5">
-                          <span className="text-[10px] font-bold text-muted-foreground/60 flex items-center gap-1"><Clock className="h-3 w-3" /> {a.time}</span>
-                          <span className="w-1 h-1 rounded-full bg-border" />
-                          <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">Completed</span>
+                {displayActivity.map((a, i) => {
+                  const Icon = typeof a.icon === 'string' ? (ICON_MAP[a.icon] || BookOpen) : a.icon;
+                  return (
+                    <Link key={i} href={a.link}>
+                      <motion.div variants={item} className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-5 flex items-center gap-5 hover:border-primary/40 hover:bg-muted/30 transition-all group cursor-pointer shadow-sm shadow-black/2">
+                        <div className={`w-11 h-11 rounded-xl ${a.bg} ${a.color} flex items-center justify-center shrink-0 shadow-inner`}>
+                          <Icon className="h-5 w-5" />
                         </div>
-                      </div>
-                      <div className="w-8 h-8 rounded-lg border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
-                        <ChevronRight className="h-4 w-4" />
-                      </div>
-                    </motion.div>
-                  </Link>
-                ))}
+                        <div className="grow min-w-0">
+                          <p className="text-sm font-bold text-foreground leading-snug group-hover:text-primary transition-colors">{a.text}</p>
+                          <div className="flex items-center gap-3 mt-1.5">
+                            <span className="text-[10px] font-bold text-muted-foreground/60 flex items-center gap-1"><Clock className="h-3 w-3" /> {a.time}</span>
+                            <span className="w-1 h-1 rounded-full bg-border" />
+                            <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">Completed</span>
+                          </div>
+                        </div>
+                        <div className="w-8 h-8 rounded-lg border border-border/60 flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
+                          <ChevronRight className="h-4 w-4" />
+                        </div>
+                      </motion.div>
+                    </Link>
+                  );
+                })}
               </div>
             </motion.div>
 
@@ -241,28 +251,31 @@ export default function Account() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {bookmarksList.map((b, i) => (
-                  <Link key={i} href={`/article/${b.id}`}>
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.98 }} 
-                      whileInView={{ opacity: 1, scale: 1 }} 
-                      viewport={{ once: true }} 
-                      transition={{ delay: i * 0.05 }}
-                      className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-6 hover:border-primary/40 transition-all group cursor-pointer relative overflow-hidden h-full"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
-                          <b.icon className="h-5 w-5" />
+                {displayBookmarks.map((b, i) => {
+                  const Icon = typeof b.icon === 'string' ? (ICON_MAP[b.icon] || BookMarked) : b.icon;
+                  return (
+                    <Link key={i} href={`/article/${b.id}`}>
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.98 }} 
+                        whileInView={{ opacity: 1, scale: 1 }} 
+                        viewport={{ once: true }} 
+                        transition={{ delay: i * 0.05 }}
+                        className="bg-white dark:bg-black/30 border border-border/40 rounded-2xl p-6 hover:border-primary/40 transition-all group cursor-pointer relative overflow-hidden h-full"
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shadow-inner">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">{b.part}</span>
                         </div>
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">{b.part}</span>
-                      </div>
-                      <h3 className="text-base font-bold text-foreground leading-tight group-hover:text-primary transition-colors mb-2">{b.title}</h3>
-                      <p className="text-[10px] font-medium text-muted-foreground leading-relaxed line-clamp-2">Fundamental framework defining the rights and guarantees of Indian citizens.</p>
-                      
-                      <div className="absolute top-0 right-0 w-16 h-16 bg-linear-to-bl from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </motion.div>
-                  </Link>
-                ))}
+                        <h3 className="text-base font-bold text-foreground leading-tight group-hover:text-primary transition-colors mb-2">{b.title}</h3>
+                        <p className="text-[10px] font-medium text-muted-foreground leading-relaxed line-clamp-2">Fundamental framework defining the rights and guarantees of Indian citizens.</p>
+                        
+                        <div className="absolute top-0 right-0 w-16 h-16 bg-linear-to-bl from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </motion.div>
+                    </Link>
+                  );
+                })}
               </div>
             </motion.div>
           </div>

@@ -20,6 +20,8 @@ const DEFAULT_USER = {
   quizScore: 0,
   streak: 0,
   bookmarks: 0,
+  activity: [] as Array<{ icon: string; text: string; time: string; color: string; bg: string; link: string }>,
+  saved: [] as Array<{ id: string; title: string; part: string; icon: string }>,
 };
 
 const INITIAL_SETTINGS = {
@@ -83,6 +85,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               quizScore: 0,
               streak: 1,
               bookmarks: 0,
+              activity: [],
+              saved: [],
             };
             await setDoc(doc(db, "users", firebaseUser.uid), newUser);
             setUser(newUser);
