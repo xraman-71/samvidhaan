@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
 } from "firebase/auth";
-import { ref, get, set, update } from "firebase/database";
+import { ref, get, set, update, onValue } from "firebase/database";
 import i18n from "@/lib/i18n";
 
 // ── Compressed DB Schema ──────────────────────────────────
@@ -98,43 +98,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 1. Initial Load: Try to get data from LocalStorage immediately for "Instant-On" feel
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // 1. Initial Load: Instant recovery from cache
   useEffect(() => {
     const cached = localStorage.getItem("samvidhaan_user_cache");
     if (cached) {
       try {
         setUser(JSON.parse(cached));
-        setLoading(false); // If we have cache, we can stop showing global loader early
-      } catch (e) {
-        console.error("Cache read error", e);
-      }
+        setLoading(false);
+      } catch (e) {}
     }
   }, []);
 
-  // 2. Background Sync: Single global auth listener + Firebase sync
+  // 2. Auth & Realtime Sync
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let dbUnsubscribe: (() => void) | null = null;
+
+    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setFbUser(firebaseUser);
       
+      // If we already have cache, we stop spinner immediately
+      if (localStorage.getItem("samvidhaan_user_cache")) {
+        setLoading(false);
+      }
+
       if (!firebaseUser) {
         setUser(DEFAULT_USER);
         localStorage.removeItem("samvidhaan_user_cache");
         setDataLoaded(true);
         setLoading(false);
+        if (dbUnsubscribe) dbUnsubscribe();
         return;
       }
 
-      try {
-        const userRef = ref(db, `users/${firebaseUser.uid}`);
-        const userSnapshot = await get(userRef);
-        
-        if (userSnapshot.exists()) {
-          const decoded = decodeUser(userSnapshot.val() as CompressedUser);
+      // Set up realtime listener instead of one-time get()
+      const userRef = ref(db, `users/${firebaseUser.uid}`);
+      
+      // Start listening for changes
+      const onValueUnsubscribe = onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const decoded = decodeUser(snapshot.val() as CompressedUser);
           setUser(decoded);
-          // Update cache for next refresh
           localStorage.setItem("samvidhaan_user_cache", JSON.stringify(decoded));
+          setDataLoaded(true);
+          setLoading(false);
         } else {
-          // Initialize new user
+          // Only initialize if we are SURE it doesn't exist AND we haven't already loaded data
+          // This prevents accidental wipes during slow network handshakes
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -147,19 +158,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
             avatar: initials,
           };
-          await set(userRef, encodeUser(newUser));
+          // Use set only once
+          set(userRef, encodeUser(newUser));
           setUser(newUser);
-          localStorage.setItem("samvidhaan_user_cache", JSON.stringify(newUser));
+          setDataLoaded(true);
+          setLoading(false);
         }
-      } catch (error) {
+      }, (error) => {
         console.error("Sync error:", error);
-      } finally {
-        setDataLoaded(true);
         setLoading(false);
-      }
+        setDataLoaded(true);
+      });
+
+      dbUnsubscribe = onValueUnsubscribe;
     });
 
-    return () => unsubscribe();
+    return () => {
+      authUnsubscribe();
+      if (dbUnsubscribe) dbUnsubscribe();
+    };
   }, []);
 
   // Apply settings side effects
@@ -199,8 +216,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(prev => {
         const updated = { ...prev, ...data };
         localStorage.setItem("samvidhaan_user_cache", JSON.stringify(updated));
-        set(ref(db, `users/${fbUser.uid}`), encodeUser(updated))
-          .catch(err => console.error("Sync error:", err));
+        // Push update to DB (non-blocking)
+        update(ref(db, `users/${fbUser.uid}`), encodeUser(updated))
+          .catch(err => console.error("Update error:", err));
         return updated;
       });
     }
