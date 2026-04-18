@@ -3,12 +3,14 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { AshokaChakra } from "./AshokaChakra";
 import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github, AlertCircle } from "lucide-react";
+import { useUserData } from "@/contexts/AuthContext";
 
 const PAGE_GUTTER = "px-6 sm:px-8 lg:px-14 xl:px-20 2xl:px-28";
 const PAGE_CONTAINER = "mx-auto w-full max-w-7xl 2xl:max-w-[1440px]";
 
 export function Footer() {
   const { t } = useTranslation();
+  const { settings, updateSettings } = useUserData();
 
   const navLinks = [
     {
@@ -218,16 +220,30 @@ export function Footer() {
               © {new Date().getFullYear()} Samvidhaan+. Open educational initiative. Built with respect for the Constitution of India.
             </p>
           </div>
-          <div className="flex items-center gap-5">
-            {[
-              { label: "Privacy", href: "/privacy" },
-              { label: "Contact", href: "/contact" },
-              { label: t('nav.about'), href: "/about" },
-            ].map((l) => (
-              <Link key={l.label} href={l.href}>
-                <span className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer">{l.label}</span>
-              </Link>
-            ))}
+          <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 border border-border/50">
+              <Globe className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mr-1">Language:</span>
+              <select 
+                value={settings.language}
+                onChange={(e) => updateSettings({ language: e.target.value as any })}
+                className="bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+              >
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-5">
+              {[
+                { label: "Privacy", href: "/privacy" },
+                { label: "Contact", href: "/contact" },
+                { label: t('nav.about'), href: "/about" },
+              ].map((l) => (
+                <Link key={l.label} href={l.href}>
+                  <span className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer">{l.label}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
