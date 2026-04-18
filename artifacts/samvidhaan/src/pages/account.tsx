@@ -42,42 +42,7 @@ export default function Account() {
     { icon: BookMarked, label: t('account.saved_items'), value: user.bookmarks, color: "text-primary", bg: "bg-primary/5" },
   ], [user.articlesRead, user.quizScore, user.streak, user.bookmarks, t]);
 
-  if (!dataLoaded && fbUser) {
-    return (
-      <div className="min-h-screen bg-[#fafafa] dark:bg-[#080808] animate-pulse">
-        <div className={`pt-12 pb-8 ${PAGE_GUTTER} border-b border-border/40 bg-white dark:bg-black/20`}>
-          <div className={`${PAGE_CONTAINER} flex flex-col md:flex-row items-start md:items-center justify-between gap-8`}>
-            <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-2xl bg-muted" />
-              <div className="space-y-3">
-                <div className="h-4 w-24 bg-muted rounded" />
-                <div className="h-8 w-48 bg-muted rounded" />
-                <div className="h-3 w-64 bg-muted rounded" />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <div className="h-9 w-28 bg-muted rounded-xl" />
-              <div className="h-9 w-28 bg-muted rounded-xl" />
-            </div>
-          </div>
-          <div className={`${PAGE_CONTAINER} grid grid-cols-2 md:grid-cols-4 gap-4 mt-10`}>
-            {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-muted rounded-2xl" />)}
-          </div>
-        </div>
-        <div className={`${PAGE_CONTAINER} ${PAGE_GUTTER} py-12 grid grid-cols-1 lg:grid-cols-12 gap-10`}>
-          <div className="lg:col-span-8 space-y-8">
-            <div className="h-8 w-48 bg-muted rounded" />
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => <div key={i} className="h-24 bg-muted rounded-2xl" />)}
-            </div>
-          </div>
-          <div className="lg:col-span-4 h-96 bg-muted rounded-3xl" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!fbUser) {
+  if (!fbUser && !loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#fafafa] dark:bg-[#080808] px-6">
         <motion.div 
