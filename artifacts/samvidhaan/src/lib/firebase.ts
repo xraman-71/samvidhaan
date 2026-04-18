@@ -2,13 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAvqvlo10QeMX79i7XRD5nI8nJdkw0yV3g",
-  authDomain: "samvidhaan-73085.firebaseapp.com",
-  projectId: "samvidhaan-73085",
-  storageBucket: "samvidhaan-73085.firebasestorage.app",
-  messagingSenderId: "111817585063",
-  appId: "1:111817585063:web:a6e58f13be520aabacc682"
+  apiKey: "AIzaSyCj4SPRee9mL8Dr0Ktf-kdrnFpZkiky8RA",
+  authDomain: "samvidhaan-d7d69.firebaseapp.com",
+  databaseURL: "https://samvidhaan-d7d69-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "samvidhaan-d7d69",
+  storageBucket: "samvidhaan-d7d69.firebasestorage.app",
+  messagingSenderId: "523238834510",
+  appId: "1:523238834510:web:3d55947df26aef05125e1f"
 };
 
 // Initialize Firebase
