@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { AshokaChakra } from "./AshokaChakra";
 import { BookOpen, Scale, Users, Gavel, Landmark, Shield, ArrowRight, Globe, Mail, Github, AlertCircle } from "lucide-react";
-import { useUserData } from "@/contexts/AuthContext";
+import { useUserData } from "@/hooks/use-user-data";
 
 const PAGE_GUTTER = "px-6 sm:px-8 lg:px-14 xl:px-20 2xl:px-28";
 const PAGE_CONTAINER = "mx-auto w-full max-w-7xl 2xl:max-w-[1440px]";
@@ -228,6 +228,7 @@ export function Footer() {
                 value={settings.language}
                 onChange={(e) => updateSettings({ language: e.target.value as any })}
                 className="bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+                title="Select Interface Language"
               >
                 <option value="en">English</option>
                 <option value="hi">हिन्दी</option>
