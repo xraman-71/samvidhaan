@@ -189,7 +189,24 @@ export default function SettingsPage() {
               </button>
             ))}
 
-
+            <div className="pt-6 mt-6 border-t border-border/40">
+              <button
+                onClick={async () => {
+                  await signOut();
+                  toast({
+                    title: "Disconnected",
+                    description: "You have been successfully signed out.",
+                  });
+                }}
+                className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-bold transition-all group text-left text-destructive hover:bg-destructive/10 border border-transparent"
+              >
+                <LogOut className="h-5 w-5 shrink-0 transition-all group-hover:scale-110" />
+                <div className="grow">
+                  <span className="block">Sign Out</span>
+                  <span className="text-[9px] font-medium opacity-60 block mt-0.5">Disconnect your account</span>
+                </div>
+              </button>
+            </div>
           </div>
 
           {/* Settings Viewport */}
