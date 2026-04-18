@@ -2,15 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
-// Your web app's Firebase configuration
+// Hardcoded for absolute reliability as requested
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: "AIzaSyCj4SPRee9mL8Dr0Ktf-kdrnFpZkiky8RA",
+  authDomain: "samvidhaan-d7d69.firebaseapp.com",
+  databaseURL: "https://samvidhaan-d7d69-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "samvidhaan-d7d69",
+  storageBucket: "samvidhaan-d7d69.firebasestorage.app",
+  messagingSenderId: "523238834510",
+  appId: "1:523238834510:web:3d55947df26aef05125e1f"
 };
 
 // Initialize Firebase
