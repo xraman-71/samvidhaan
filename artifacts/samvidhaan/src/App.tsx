@@ -17,7 +17,32 @@ import Framers from "@/pages/framers";
 import Account from "@/pages/account";
 import SettingsPage from "@/pages/settings";
 
+import { useUserData } from "@/hooks/use-user-data";
+import { useLocation } from "wouter";
+import { useEffect } from "react";
+
 const queryClient = new QueryClient();
+
+function ProtectedRoute({ component: Component, path }: { component: any; path: string }) {
+  const { fbUser, loading } = useUserData();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!loading && !fbUser) {
+      setLocation("/");
+    }
+  }, [fbUser, loading, setLocation]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return fbUser ? <Route path={path} component={Component} /> : null;
+}
 
 function Router() {
   return (
@@ -32,8 +57,8 @@ function Router() {
         <Route path="/making" component={Making} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/contact" component={Contact} />
-        <Route path="/account" component={Account} />
-        <Route path="/settings" component={SettingsPage} />
+        <ProtectedRoute path="/account" component={Account} />
+        <ProtectedRoute path="/settings" component={SettingsPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
