@@ -98,8 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  const [dataLoaded, setDataLoaded] = useState(false);
-
   // 1. Initial Load: Instant recovery from cache
   useEffect(() => {
     const cached = localStorage.getItem("samvidhaan_user_cache");
