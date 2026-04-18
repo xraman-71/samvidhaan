@@ -118,20 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 1. Initial Load: Instant recovery from cache
-  useEffect(() => {
-    const lastUid = localStorage.getItem("samvidhaan_last_uid");
-    if (lastUid) {
-      const cached = localStorage.getItem(`samvidhaan_cache_${lastUid}`);
-      if (cached) {
-        try {
-          setUser(JSON.parse(cached));
-        } catch (e) {}
-      }
-    }
-  }, []);
-
-  // 2. Auth & Realtime Sync
+  // 1. Auth & Realtime Sync
   useEffect(() => {
     let dbUnsubscribe: (() => void) | null = null;
 
@@ -140,38 +127,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (!firebaseUser) {
         setUser(DEFAULT_USER);
-        localStorage.removeItem("samvidhaan_last_uid");
         setDataLoaded(true);
         setLoading(false); // Auth is determined (None)
         if (dbUnsubscribe) dbUnsubscribe();
         return;
       }
 
-      // Record this UID for next boot
-      localStorage.setItem("samvidhaan_last_uid", firebaseUser.uid);
-      
-      // AUTH IS DETERMINED - Stop blocking the app!
+      // AUTH IS DETERMINED
       setLoading(false); 
 
-      // Check for scoped cache
-      const cacheKey = `samvidhaan_cache_${firebaseUser.uid}`;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        try {
-          setUser(JSON.parse(cached));
-          setDataLoaded(true);
-        } catch (e) {}
-      }
-
-      // Set up realtime listener for data sync
+      // Set up realtime listener for data sync (Pure Firebase, no LocalStorage)
       const userRef = ref(db, `users/${firebaseUser.uid}`);
       const onValueUnsubscribe = onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
           const decoded = decodeUser(snapshot.val());
           setUser(decoded);
-          localStorage.setItem(cacheKey, JSON.stringify(decoded));
         } else {
-          // Initialize New User
+          // Initialize New User directly in Firebase
           const initials = (firebaseUser.displayName || "Scholar")
             .split(" ")
             .map((n) => n[0])
@@ -186,11 +158,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
           set(userRef, encodeUser(newUser));
           setUser(newUser);
-          localStorage.setItem(cacheKey, JSON.stringify(newUser));
         }
         setDataLoaded(true);
       }, (error) => {
-        console.error("Sync error:", error);
+        console.error("Firebase Sync error:", error);
         setDataLoaded(true);
       });
 
@@ -237,10 +208,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = async (data: Partial<UserData>) => {
     if (fbUser && dataLoaded) {
-      const cacheKey = `samvidhaan_cache_${fbUser.uid}`;
       setUser(prev => {
         const updated = { ...prev, ...data };
-        localStorage.setItem(cacheKey, JSON.stringify(updated));
         // Push update to DB (non-blocking)
         update(ref(db, `users/${fbUser.uid}`), encodeUser(updated))
           .catch(err => console.error("Update error:", err));
