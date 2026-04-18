@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://postimg.cc/QF5vVPHX" alt="Samvidhaan+ Logo - Indian Constitution App" width="120" />
+  <img src="https://i.postimg.cc/8znGXgGr/LOGO(1).jpg" alt="Samvidhaan+ Logo - Indian Constitution App" width="120" />
   <h1>Samvidhaan+ | The Ultimate Indian Constitution App</h1>
   <p><b>Know Your Rights. Own Your Constitution. Master Indian Polity.</b></p>
   <p><b>अपने अधिकारों को जानें। भारत का संविधान समझें। (Bhartiya Samvidhan)</b></p>
