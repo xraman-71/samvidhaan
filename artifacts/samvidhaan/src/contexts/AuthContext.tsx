@@ -118,84 +118,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
   });
 
-  // 2. Auth State Listener
+  // 2. Auth & Realtime Sync Engine
   useEffect(() => {
-    const authUnsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setFbUser(firebaseUser);
-      setLoading(false);
-      if (!firebaseUser) {
+    let dbUnsubscribe: (() => void) | null = null;
+
+    const authUnsubscribe = onAuthStateChanged(auth, async (user) => {
+      setFbUser(user);
+      
+      if (!user) {
         setUser(DEFAULT_USER);
         setDataLoaded(true);
+        setLoading(false);
+        if (dbUnsubscribe) dbUnsubscribe();
+        return;
       }
-    });
-    return () => authUnsubscribe();
-  }, []);
 
-  // 3. Data Sync Listener (Pure Firebase)
-  useEffect(() => {
-    if (!fbUser) return;
+      console.log("Samvidhaan Cloud: Syncing session for", user.email);
 
-    const syncUser = async () => {
-      console.log("Samvidhaan Cloud: Connecting to database for", fbUser.email);
-      const userRef = ref(db, `users/${fbUser.uid}`);
-      
       try {
-        // Direct check for existence (More stable for creation)
+        const userRef = ref(db, `users/${user.uid}`);
         const snapshot = await get(userRef);
-        
+
         if (!snapshot.exists()) {
-          console.log("Samvidhaan Cloud: New scholar detected. Initializing cloud profile...");
-          const initials = (fbUser.displayName || "Scholar")
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase();
-          
+          console.log("Samvidhaan Cloud: Creating new scholar profile...");
+          const initials = (user.displayName || "Scholar").split(" ").map(n => n[0]).join("").toUpperCase();
           const newUser: UserData = {
             ...DEFAULT_USER,
-            name: fbUser.displayName || "Scholar",
-            email: fbUser.email || "",
+            name: user.displayName || "Scholar",
+            email: user.email || "",
             joined: new Date().toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
             avatar: initials,
           };
-
-          // Direct set like the user snippet
           await set(userRef, encodeUser(newUser));
-          console.log("Samvidhaan Cloud: Profile successfully added to Firebase!");
           setUser(newUser);
+          console.log("Samvidhaan Cloud: User saved successfully!");
         } else {
           setUser(decodeUser(snapshot.val()));
-          console.log("Samvidhaan Cloud: Existing profile loaded.");
+          console.log("Samvidhaan Cloud: Profile loaded from database.");
         }
-        
-        setDataLoaded(true);
 
-        // Start realtime listener for subsequent updates
-        const onValueUnsubscribe = onValue(userRef, (snap) => {
-          if (snap.exists()) {
-            setUser(decodeUser(snap.val()));
-          }
-        }, (error) => {
-          console.error("Samvidhaan Cloud: Sync error", error);
+        // Setup real-time listener for updates
+        dbUnsubscribe = onValue(userRef, (snap) => {
+          if (snap.exists()) setUser(decodeUser(snap.val()));
         });
 
-        return onValueUnsubscribe;
       } catch (error: any) {
-        console.error("Samvidhaan Cloud: Connection error:", error);
-        alert("DATABASE CONNECTION FAILED! \n\nReason: " + error.message);
+        console.error("Samvidhaan Cloud: Sync failed:", error.code, error.message);
+        // alert("Cloud Sync Failed: " + error.message);
+      } finally {
         setDataLoaded(true);
+        setLoading(false);
       }
-    };
-
-    let unsubscribe: (() => void) | undefined;
-    syncUser().then(unsub => {
-      unsubscribe = unsub;
     });
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      authUnsubscribe();
+      if (dbUnsubscribe) dbUnsubscribe();
     };
-  }, [fbUser]);
+  }, []);
 
   // Apply settings side effects
   useEffect(() => {
