@@ -110,19 +110,17 @@ function SectionCard({ title, icon: Icon, children }: {
 
 export default function SettingsPage() {
   const { t } = useTranslation();
-  const { user, settings, updateProfile, updateSettings, signOut } = useUserData();
+  const { user, fbUser, settings, updateProfile, updateSettings, signOut } = useUserData();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = React.useState("General");
   const [formData, setFormData] = React.useState({
     firstName: user.name.split(" ")[0] || "",
     lastName: user.name.split(" ")[1] || "",
-    email: user.email
   });
 
   const handleProfileUpdate = () => {
     updateProfile({
-      name: `${formData.firstName} ${formData.lastName}`.trim(),
-      email: formData.email
+      name: `${formData.firstName} ${formData.lastName}`.trim()
     });
     toast({
       title: "Configuration Saved",
@@ -245,9 +243,9 @@ export default function SettingsPage() {
                     <div className="flex gap-4">
                       <input 
                         id="email"
-                        value={formData.email} 
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="grow bg-muted/40 border border-border/40 rounded-xl px-4 py-3 text-sm font-bold text-foreground outline-none shadow-inner" 
+                        value={fbUser?.email || user.email || ""} 
+                        readOnly
+                        className="grow bg-muted/20 border border-border/40 rounded-xl px-4 py-3 text-sm font-bold text-muted-foreground outline-none shadow-inner cursor-not-allowed opacity-70" 
                       />
                       <div className="shrink-0 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-green-600 bg-green-500/10 px-4 rounded-xl border border-green-500/20">
                         <Check className="h-3.5 w-3.5" /> Verified
