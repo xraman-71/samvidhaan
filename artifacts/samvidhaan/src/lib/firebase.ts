@@ -2,11 +2,11 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
-// Hardcoded for absolute reliability as requested
+// Hardcoded for absolute reliability - Locked to Singapore (asia-southeast1)
 const firebaseConfig = {
   apiKey: "AIzaSyCj4SPRee9mL8Dr0Ktf-kdrnFpZkiky8RA",
   authDomain: "samvidhaan-d7d69.firebaseapp.com",
-  databaseURL: "https://samvidhaan-d7d69-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://samvidhaan-d7d69-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "samvidhaan-d7d69",
   storageBucket: "samvidhaan-d7d69.firebasestorage.app",
   messagingSenderId: "523238834510",
