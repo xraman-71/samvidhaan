@@ -74,6 +74,9 @@
     "vaul": "^1.1.2",
     "vite": "catalog:",
     "wouter": "^3.3.5",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "firebase": "^11.3.1",
+    "i18next-browser-languagedetector": "^8.0.2",
+    "@types/i18next-browser-languagedetector": "^3.0.0"
   }
 }

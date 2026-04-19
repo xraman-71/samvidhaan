@@ -8,12 +8,32 @@ import {
 import { auth, googleProvider } from "@/lib/firebase";
 
 // Basic Scholar Data (Local Only)
+export interface Activity {
+  icon: string;
+  text: string;
+  time: string;
+  color: string;
+  bg: string;
+  link: string;
+}
+
+export interface SavedItem {
+  id: string;
+  title: string;
+  part: string;
+  icon: string;
+}
+
 export interface UserData {
   name: string;
   email: string;
   avatar: string;
   level: string;
   streak: number;
+  articlesRead: number;
+  activity: Activity[];
+  saved: SavedItem[];
+  bookmarks: number;
 }
 
 const DEFAULT_USER: UserData = {
@@ -22,6 +42,10 @@ const DEFAULT_USER: UserData = {
   avatar: "S",
   level: "Beginner",
   streak: 0,
+  articlesRead: 0,
+  activity: [],
+  saved: [],
+  bookmarks: 0,
 };
 
 // Simple Settings (Local Only)
@@ -43,6 +67,7 @@ interface AuthContextValue {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   updateSettings: (data: Partial<Settings>) => void;
+  updateProfile: (data: Partial<UserData>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -102,6 +127,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSettings((prev) => ({ ...prev, ...data }));
   };
 
+  const updateProfile = async (data: Partial<UserData>) => {
+    setUser((prev) => ({ ...prev, ...data }));
+    // In a real app, you would also save this to Firebase/DB here
+  };
+
   return (
     <AuthContext.Provider value={{ 
       fbUser, 
@@ -110,7 +140,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading, 
       signInWithGoogle, 
       signOut,
-      updateSettings 
+      updateSettings,
+      updateProfile
     }}>
       {children}
     </AuthContext.Provider>
