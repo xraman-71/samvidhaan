@@ -34,6 +34,7 @@ export interface UserData {
   activity: Activity[];
   saved: SavedItem[];
   bookmarks: number;
+  quizScore: number;
 }
 
 const DEFAULT_USER: UserData = {
@@ -46,6 +47,7 @@ const DEFAULT_USER: UserData = {
   activity: [],
   saved: [],
   bookmarks: 0,
+  quizScore: 0,
 };
 
 // Simple Settings (Local Only)
