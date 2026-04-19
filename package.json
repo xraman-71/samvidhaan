@@ -10,9 +10,10 @@
   },
   "private": true,
   "devDependencies": {
-    "typescript": "~5.9.2",
+    "@types/node": "catalog:",
+    "cross-env": "^7.0.3",
     "prettier": "^3.8.1",
     "rimraf": "^6.0.1",
-    "cross-env": "^7.0.3"
+    "typescript": "~5.9.2"
   }
 }

@@ -139,7 +139,7 @@ export function Header() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             title={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileMenuOpen}
+            aria-expanded={mobileMenuOpen ? "true" : "false"}
           >
             <span
               className={`absolute transition-all duration-200 ${mobileMenuOpen ? "opacity-100 rotate-0" : "opacity-0 -rotate-90"}`}
